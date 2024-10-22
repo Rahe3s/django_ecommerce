@@ -1,0 +1,53 @@
+{%include 'head.html'%} {%include 'navbar.html'%}
+
+<body>
+  <div class="form-container">
+    <h1 class="text-center mb-4">Register</h1>
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="form-group mb-4">
+        {{ regform.first_name }} {% if regform.first_name.errors %}
+        <div class="alert alert-danger">{{ regform.first_name.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group mb-4">
+        {{ regform.last_name }} {% if regform.last_name.errors %}
+        <div class="alert alert-danger">{{ regform.last_name.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group mb-4">
+        {{ regform.phone }} {% if regform.phone.errors %}
+        <div class="alert alert-danger">{{ regform.phone.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group mb-4">
+        {{ regform.email }} {% if regform.email.errors %}
+        <div class="alert alert-danger">{{ form.email.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group mb-4">
+        {{ regform.password }} {% if regform.password.errors %}
+        <div class="alert alert-danger">{{ regform.password.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group mb-4">
+        {{ regform.confirm_password }} {% if regform.confirm_password.errors %}
+        <div class="alert alert-danger">
+          {{ regform.confirm_password.errors }}
+        </div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary mb-3">Register</button>
+      <p class="text-centerna">
+        <a href="{% url 'login' %}">Already registered?!! Login</a>
+      </p>
+    </form>
+  </div>
+</body>
