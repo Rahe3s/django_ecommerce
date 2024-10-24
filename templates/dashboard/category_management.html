@@ -1,31 +1,32 @@
-{% extends "dashboard/dashboard.html" %} {%block content%}
-<div class="form-container" >
-  <!-- User management content goes here -->
-  <h1>Category List</h1>
-  <table>
+{% extends "dashboard/dashboard.html" %}
+{%block content%}
+<div class="category-form-container">
+    <h1>Category List</h1>
+    <table class="category-table">
       <thead>
-          <tr>
-              <th>Category Name</th>
-              <th>Slug</th>
-              <th>Image</th>
-          </tr>
+        <tr>
+          <th>Category Name</th>
+          <th>Image</th>
+        </tr>
       </thead>
       <tbody>
-          {% for category in categories %}
-              <tr>
-                  <td>{{ category.category_name }}</td>
-                  <td>{{ category.slug }}</td>
-                  <td>
-                      {% if category.category_image %}
-                          <img src="{{ category.category_image.url }}" alt="{{ category.category_name }}" width="50">
-                      {% endif %}
-                  </td>
-              </tr>
-          {% endfor %}
+        {% for category in categories %}
+        <tr>
+          <td>{{ category.category_name }}</td>
+          <td>
+            {% if category.category_image %}
+            <img
+              src="{{ category.category_image.url }}"
+              alt="{{ category.category_name }}"
+              width="50"
+            />
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
       </tbody>
-  </table>
-  <a href="{% url 'add_category' %}">Add New Category</a>
-  <!-- User table or form, etc. -->
-</div>
-
+    </table>
+    <a href="{% url 'add_category' %}" class="add-category-btn">Add New Category</a>
+  </div>
+  
 {%endblock%}

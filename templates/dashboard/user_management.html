@@ -1,8 +1,26 @@
 {% extends "dashboard/dashboard.html" %} {%block content%}
-<div>
-  <!-- User management content goes here -->
-  <h2>User Management</h2>
-  <!-- User table or form, etc. -->
+<div class="category-form-container">
+  <h1>Category List</h1>
+  <table class="category-table">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>email</th>
+        <th>phone</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.first_name }}</td>
+        <td>{{user.last_name}}</td>
+        <td>{{user.email}}</td>
+        <td>{{user.phone}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 {%endblock%}

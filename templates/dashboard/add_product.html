@@ -1,0 +1,22 @@
+{% extends "dashboard/dashboard.html" %} {%block content%}
+<div class="form-container">
+  <h1>Add Category</h1>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+    {{ product_form.as_p }}
+    </div>
+    <h2>Upload Product Images</h2>
+    <div class="image-formset">
+      {{ image_formset.management_form }}
+      {% for form in image_formset %}
+        <div class="image-upload">
+          {{ form.as_p }}
+        </div>
+      {% endfor %}
+    <!-- This renders the form fields -->
+    <button type="submit">Add Product</button>
+  </form>
+  <a href="{% url 'product_management' %}">Back to product Management</a>
+</div>
+{% endblock %}

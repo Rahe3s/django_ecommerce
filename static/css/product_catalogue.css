@@ -1,0 +1,16 @@
+.product-detail-container {
+    margin: 20px 0;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: #fff;
+    border-radius: 8px;
+}
+
+.product-price {
+    font-size: 20px;
+    color: #28a745; /* Green color */
+}
+
+.add-to-cart {
+    margin-top: 20px;
+}

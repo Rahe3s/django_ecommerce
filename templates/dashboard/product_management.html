@@ -1,8 +1,38 @@
-{% extends "dashboard/dashboard.html" %} {%block content%}
-<div>
-  <!-- User management content goes here -->
-  <h2>Product Management</h2>
-  <!-- User table or form, etc. -->
-</div>
+{% extends "dashboard/dashboard.html" %}
 
-{%endblock%}
+{% block content %}
+<div class="category-form-container">
+  <h1>Product List</h1>
+  <table class="category-table">
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Description</th>
+        <th>Images</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products_list %}
+      <tr>
+        <td>{{ product.product_name }}</td>
+        <td>{{ product.category.category_name }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.product_description }}</td>
+        <td>
+          {% for image in product.product_images.all %}
+          <img
+            src="{{ image.image.url }}"
+            alt="{{ product.product_name }}"
+            width="50"
+          />
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{% url 'add_product' %}" class="add-category-btn">Add New Product</a>
+</div>
+{% endblock %}

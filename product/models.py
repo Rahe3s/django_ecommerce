@@ -7,7 +7,7 @@ class Category(models.Model):
     uid = models.UUIDField(primary_key=True , editable=False , default=uuid.uuid4)
     category_name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True, blank=True)
-    category_image = models.ImageField(upload_to='categories', null=True, blank=True)
+    category_image = models.ImageField(upload_to='categories/', null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.category_name)

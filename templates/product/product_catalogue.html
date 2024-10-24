@@ -1,0 +1,60 @@
+{% extends 'base.html' %} {% block body %}
+
+<!-- Start Product Detail Section -->
+<div class="product-detail-container">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6">
+        <!-- Product Image Carousel -->
+        <div id="productCarousel" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
+            {% for image in product.product_images.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <img
+                src="{{ image.image.url }}"
+                class="d-block w-100"
+                alt="{{ product.product_name }}"
+              />
+            </div>
+            {% endfor %}
+          </div>
+          <a
+            class="carousel-control-prev"
+            href="#productCarousel"
+            role="button"
+            data-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a
+            class="carousel-control-next"
+            href="#productCarousel"
+            role="button"
+            data-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+        <!-- End Product Image Carousel -->
+      </div>
+      <div class="col-lg-6">
+        <h1>{{ product.product_name }}</h1>
+        <strong class="product-price">${{ product.price }}</strong>
+        <p>{{ product.product_description }}</p>
+
+        <!-- Add to Cart Button -->
+        <div class="add-to-cart mt-3">
+          <button class="btn btn-primary">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Product Detail Section -->
+<!-- Include Bootstrap JS (make sure to add jQuery if you haven't already) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}
