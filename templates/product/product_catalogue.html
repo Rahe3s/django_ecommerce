@@ -41,9 +41,28 @@
       </div>
       <div class="col-lg-6">
         <h1>{{ product.product_name }}</h1>
-        <strong class="product-price">${{ product.price }}</strong>
+        <strong class="product-price">₹{{ product.price }}</strong>
         <p>{{ product.product_description }}</p>
+        <div class="form-group">
+          <label for="size">Size:</label>
+          <select id="size" class="form-control" onchange="updateVariant()">
+            <option value="">Select Size</option>
+            {% for size in unique_sizes %}
+            <option value="{{ size }}">{{ size }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
+        <!-- Color Selection -->
+        <div class="form-group">
+          <label for="color">Color:</label>
+          <select id="color" class="form-control" onchange="updateVariant()">
+            <option value="">Select Color</option>
+            {% for color in unique_colors %}
+            <option value="{{ color }}">{{ color }}</option>
+            {% endfor %}
+          </select>
+        </div>
         <!-- Add to Cart Button -->
         <div class="add-to-cart mt-3">
           <button class="btn btn-primary">Add to Cart</button>
@@ -53,6 +72,7 @@
   </div>
 </div>
 <!-- End Product Detail Section -->
+
 <!-- Include Bootstrap JS (make sure to add jQuery if you haven't already) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>

@@ -1,0 +1,11 @@
+{% extends "dashboard/dashboard.html" %} {% block content %}
+<div class="form-container">
+  <h1>Update Category</h1>
+  <form method="POST">
+    {% csrf_token %}
+    <div>{{ form.as_p }}</div>
+    <button type="submit">Update Category</button>
+  </form>
+  <a href="{% url 'category_management' %}">Back to Category Management</a>
+</div>
+{% endblock %}

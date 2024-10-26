@@ -1,0 +1,31 @@
+{% extends "dashboard/dashboard.html" %} {% block content %}
+<div class="form-container">
+  <h1>Update Product</h1>
+
+  <form
+    method="POST"
+    enctype="multipart/form-data"
+    action="{% url 'update_product' product.uid %}"
+  >
+    {% csrf_token %}
+
+    <!-- Product form fields -->
+    <div>{{ product_form.as_p }}</div>
+
+    <h2>Manage Product Images</h2>
+
+    <!-- Image formset for uploading and editing images -->
+    <div class="image-formset">
+      {{ image_formset.management_form }} {% for form in image_formset %}
+      <div class="image-upload">{{ form.as_p }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Update Product Button -->
+    <button type="submit">Update Product</button>
+  </form>
+
+  <!-- Link back to Product Management page -->
+  <a href="{% url 'product_management' %}">Back to Product Management</a>
+</div>
+{% endblock %}

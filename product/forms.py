@@ -1,6 +1,6 @@
 from django import forms
 from .models import Category,products,productImages
-from django.forms import modelformset_factory
+from django.forms import modelformset_factory,inlineformset_factory
 
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -23,8 +23,25 @@ class ProductImageForm(forms.ModelForm):
         model = productImages
         fields = ['image']
 
-ProductImageFormSet = modelformset_factory(
+ProductImageUpdateFormSet = inlineformset_factory(
+    products,
+    productImages,
+    form = ProductImageForm,
+    extra =0,
+)
+
+ProductImageFormSet = inlineformset_factory(
+    products,
     productImages,
     form = ProductImageForm,
     extra =3,
 )
+
+
+from django import forms
+from .models import ProductVariant
+
+class ProductVariantForm(forms.ModelForm):
+    class Meta:
+        model = ProductVariant
+        fields = ['product', 'size', 'color', 'stock', 'price_adjustment']

@@ -3,6 +3,8 @@
 {% block content %}
 <div class="category-form-container">
   <h1>Product List</h1>
+  
+  <!-- Product List Table -->
   <table class="category-table">
     <thead>
       <tr>
@@ -11,10 +13,11 @@
         <th>Price</th>
         <th>Description</th>
         <th>Images</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      {% for product in products_list %}
+      {% for product in product_page_obj %}
       <tr>
         <td>{{ product.product_name }}</td>
         <td>{{ product.category.category_name }}</td>
@@ -22,17 +25,78 @@
         <td>{{ product.product_description }}</td>
         <td>
           {% for image in product.product_images.all %}
-          <img
-            src="{{ image.image.url }}"
-            alt="{{ product.product_name }}"
-            width="50"
-          />
+          <img src="{{ image.image.url }}" alt="{{ product.product_name }}" width="50" />
           {% endfor %}
+        </td>
+        <td>
+          <a href="{% url 'update_product' product.uid %}" class="btn btn-primary mb-3">Edit</a>
+          <a href="{% url 'delete_product' product.uid %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+
+  <!-- Product List Pagination -->
+  <div class="pagination  d-flex align-items-center justify-content-between p-2 ">
+    <span>Page {{ product_page_obj.number }} of {{ product_page_obj.paginator.num_pages }}</span>
+    <div class="d-flex w-100 justify-content-between">
+      {% if product_page_obj.has_previous %}
+      <a class="" href="?product_page={{ product_page_obj.previous_page_number }}" style="color: #007bff; margin-right: auto;">&laquo; Previous</a>
+      {% endif %}
+      {% if product_page_obj.has_next %}
+      <a class="" href="?product_page={{ product_page_obj.next_page_number }}" style="color: #28a745; margin-left: auto;">Next &raquo;</a>
+      {% endif %}
+    </div>
+  </div>
+  
+  <!-- Link to Add New Product -->
   <a href="{% url 'add_product' %}" class="add-category-btn">Add New Product</a>
+
+  <!-- Product Variant List Table -->
+  <h1>Product Variants</h1>
+  <table class="category-table">
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Size</th>
+        <th>Color</th>
+        <th>Stock</th>
+        <th>Price Adjustment</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for variant in variant_page_obj %}
+      <tr>
+        <td>{{ variant.product.product_name }}</td>
+        <td>{{ variant.size }}</td>
+        <td>{{ variant.color }}</td>
+        <td>{{ variant.stock }}</td>
+        <td>${{ variant.price_adjustment }}</td>
+        <td>
+          <a href="{% url 'update_product_variant' variant.uid %}" class="btn btn-primary mb-3">Edit</a>
+          <a href="{% url 'delete_product_variant' variant.uid %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this variant?');">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Product Variant Pagination -->
+  <div class="pagination  d-flex align-items-center justify-content-between p-2">
+    <span>Page {{ variant_page_obj.number }} of {{ variant_page_obj.paginator.num_pages }}</span>
+    <div class="d-flex w-100 justify-content-between">
+      {% if variant_page_obj.has_previous %}
+      <a href="?variant_page={{ variant_page_obj.previous_page_number }}" style="color: #007bff; margin-right: auto;">&laquo; Previous</a>
+      {% endif %}
+      {% if variant_page_obj.has_next %}
+      <a href="?variant_page={{ variant_page_obj.next_page_number }}" style="color: #28a745; margin-left: auto;">Next &raquo;</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Link to Add New Variant -->
+  <a href="{% url 'add_product_variant' %}" class="add-category-btn">Add New Variant</a>
 </div>
 {% endblock %}

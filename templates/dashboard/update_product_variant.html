@@ -1,0 +1,17 @@
+{% extends "dashboard/dashboard.html" %} {% block content %}
+<div class="form-container">
+  <h1>Update Product Variant</h1>
+
+  <form method="POST" action="{% url 'update_product_variant' variant.uid %}">
+    {% csrf_token %}
+
+    <!-- Render the form fields with pre-filled data -->
+    <div>{{ product_variant_form.as_p }}</div>
+
+    <button type="submit">Update Variant</button>
+  </form>
+
+  <!-- Link to navigate back to the variant management page -->
+  <a href="{% url 'product_management' %}">Back to Variant Management</a>
+</div>
+{% endblock %}

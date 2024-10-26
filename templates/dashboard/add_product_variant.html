@@ -1,0 +1,11 @@
+{% extends "dashboard/dashboard.html" %} {% block content %}
+<div class="form-container">
+  <h1>Add Product Variant</h1>
+  <form method="POST">
+    {% csrf_token %}
+    <div>{{ product_variant_form.as_p }}</div>
+    <button type="submit">Add Variant</button>
+  </form>
+  <a href="{% url 'product_management' %}">Back to Variant Management</a>
+</div>
+{% endblock %}
