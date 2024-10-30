@@ -8,21 +8,46 @@ def cart(request):
     total_price = 0
 
     if request.user.is_authenticated:
-        # Fetch cart items from the database for logged-in users
-        user_cart_items = CartItem.objects.filter(user=request.user)  # Adjust as per your CartItem model structure
+        # Check if there's a session cart with items and add them to the user's cart
+        session_cart = request.session.get('cart', [])
+        if session_cart:
+            # Get or create a cart for the authenticated user
+            user_cart, created = Cart.objects.get_or_create(user=request.user)
+
+            for item in session_cart:
+                # Fetch the product variant based on the session item data
+                product_variant = ProductVariant.objects.filter(uid=item['product_variant_id']).first()
+                
+                if product_variant:
+                    # Add each session cart item to the authenticated user's cart in the database
+                    cart_item, created = CartItem.objects.get_or_create(
+                        cart=user_cart,
+                        product_variant=product_variant,
+                        defaults={'quantity': item['quantity']}
+                    )
+                    if not created:
+                        cart_item.quantity += item['quantity']
+                        cart_item.save()
+
+            # Clear the session cart after merging
+            del request.session['cart']
+
+        # Fetch user's cart items from the database
+        user_cart_items = CartItem.objects.filter(cart__user=request.user)
         
         for item in user_cart_items:
-            product_variant = item.variant  # Assuming CartItem has a ForeignKey to ProductVariant
+            product_variant = item.product_variant
             product = product_variant.product
-            product_images = product.product_images.all()  # Assuming this is how you fetch product images
+            product_images = product.product_images.all()  # Adjust based on image fetching logic
             
             cart_items.append({
                 'variant': product_variant,
                 'product': product,
                 'images': product_images,
                 'quantity': item.quantity,
-                'total_price': product_variant.product.price * item.quantity  # Calculate total price for each item
+                'total_price': product_variant.product.price * item.quantity  # Total price per item
             })
+
     else:
         # Fetch cart items from session for guests
         cart = request.session.get('cart', [])
@@ -48,29 +73,37 @@ def cart(request):
 
   
 
-def add_to_cart(request,uid):
+def add_to_cart(request, uid):
     if request.method == 'POST':
-        print("entered")
         size = request.POST.get('size')
         color = request.POST.get('color')
         quantity = int(request.POST.get('quantity', 1))
-
 
         product = get_object_or_404(products, uid=uid)
         product_variant = get_object_or_404(ProductVariant, product=product, size=size, color=color)
 
         if request.user.is_authenticated:
+            # Ensure the user has a cart
+            cart, created = Cart.objects.get_or_create(user=request.user)
+            
+            # Add the item to the cart
             cart_item, created = CartItem.objects.get_or_create(
-                user = request.user,
-                variant = product_variant,
-                defaults= {'quantity': quantity},
+                cart=cart,
+                product_variant=product_variant,
+                defaults={'quantity': quantity}
             )
 
             if not created:
+                # If the item already exists, update the quantity
                 cart_item.quantity += quantity
                 cart_item.save()
 
             messages.success(request, "Product added to your cart.")
+            
+            # Clear the session cart if the user is authenticated
+            if 'cart' in request.session:
+                del request.session['cart']  # Remove the session cart
+
         else:
 #             # Logic to add the product to session
             cart = request.session.get('cart', [])
@@ -97,10 +130,6 @@ def add_to_cart(request,uid):
 
     return redirect('product_catalogue', uid=uid)  
 
-# def add_to_cart(request,uid):
-#     if request.method == 'POST':
-#         print('entered to cart')
-    
 
     
 
@@ -116,19 +145,27 @@ def remove_from_cart(request, uid):
     product_variant = get_object_or_404(ProductVariant, uid=uid)
 
     if request.user.is_authenticated:
-        # If the user is authenticated, try to remove the item from the database cart
-        cart_item = CartItem.objects.filter(user=request.user, variant=product_variant).first()
-        if cart_item:
-            cart_item.delete()
-            messages.success(request, "Item removed from your cart.")
+        # Ensure the user has a cart
+        cart = Cart.objects.filter(user=request.user).first()
+        
+        if cart:
+            # Try to remove the item from the user's database cart
+            cart_item = CartItem.objects.filter(cart=cart, product_variant=product_variant).first()
+            if cart_item:
+                cart_item.delete()
+                messages.success(request, "Item removed from your cart.")
+            else:
+                messages.error(request, "Item not found in your cart.")
         else:
-            messages.error(request, "Item not found in your cart.")
+            messages.error(request, "Cart not found.")
+
     else:
         # For guests, update the cart stored in the session
         cart = request.session.get('cart', [])
+        # Filter out the item to be removed
         cart = [item for item in cart if item['product_variant_id'] != str(product_variant.uid)]
         request.session['cart'] = cart
         messages.success(request, "Item removed from your session cart.")
 
     return redirect('cart')
-    
+

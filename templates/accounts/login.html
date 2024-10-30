@@ -3,11 +3,11 @@
 <body>
   <div class="form-container">
     <h1 class="text-center mb-4">Login</h1>
-    <form method="POST">
+    <form method="post" autocomplete="off" action="{% url 'login_page' %}">
       {% csrf_token %}
       <div class="form-group mb-4">
-        {{ loginform.email }} {% if form.email.errors %}
-        <div class="alert alert-danger">{{ loginform.email.errors }}</div>
+        {{ loginform.phone }} {% if loginform.phone.errors %}
+        <div class="alert alert-danger">{{ loginform.phone.errors }}</div>
         {% endif %}
       </div>
 

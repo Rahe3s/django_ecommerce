@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
-from .forms import loginForms,regForms
-from django.contrib.auth import authenticate
+from .forms import regForms,LoginForms
+from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from .models import User_Details
 import random
@@ -85,7 +85,7 @@ def otp_verification(request):
                 del request.session['otp_created_at']
 
                 messages.success(request, "Registration successful. You can now log in.")
-                return redirect('login')
+                return redirect('login_page')
             
             else:
                 messages.success(request, "Oops!! Invalid otp,Try again.")
@@ -97,32 +97,39 @@ def otp_verification(request):
 
     return render(request, 'accounts/otp.html' )
 
-def login(request):
+def login_page(request):
+    
     if request.user.is_authenticated:
         return redirect('home')
     
     if request.method == 'POST':
-        loginform = loginForms(request.POST)
-        username = request.POST['username']
-        password = request.POST['password']
+        loginform = LoginForms(request.POST)       
         
-        user = authenticate(request, username=username, password=password)
+        
+        if loginform.is_valid():  
+            phone = loginform.cleaned_data.get('phone')
+            password = loginform.cleaned_data.get('password')
+            
+            user = authenticate(request, phone=phone, password=password)
+            print('we r here')
+            if user is not None:            
+                login(request, user)
+                
 
-        if user is not None:            
-            login(request, user)
-            if user.is_staff:
-
-                response = redirect('dashboard')            
-                return response
+                if user.is_staff:
+                    return redirect('dashboard')
+                else:
+                    return redirect('home')
             else:
-                return redirect('home')
-        else:
-            loginform.add_error('username', "User doesn't exist.")
-
+                loginform.add_error(phone, "Invalid phone or password.")
     else:
-        loginform = loginForms()
+        loginform = LoginForms()
     
     return render(request, 'accounts/login.html', {'loginform': loginform})
+
+def logout_page(request):
+    logout(request)
+    return redirect('login_page')
 
 
     
