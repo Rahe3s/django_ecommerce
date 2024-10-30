@@ -34,7 +34,6 @@
             data-slide="next"
           >
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
           </a>
         </div>
         <!-- End Product Image Carousel -->
@@ -43,30 +42,53 @@
         <h1>{{ product.product_name }}</h1>
         <strong class="product-price">₹{{ product.price }}</strong>
         <p>{{ product.product_description }}</p>
-        <div class="form-group">
-          <label for="size">Size:</label>
-          <select id="size" class="form-control" onchange="updateVariant()">
-            <option value="">Select Size</option>
-            {% for size in unique_sizes %}
-            <option value="{{ size }}">{{ size }}</option>
-            {% endfor %}
-          </select>
-        </div>
+        <p>Product UID: {{ product.uid }}</p>
 
-        <!-- Color Selection -->
-        <div class="form-group">
-          <label for="color">Color:</label>
-          <select id="color" class="form-control" onchange="updateVariant()">
-            <option value="">Select Color</option>
-            {% for color in unique_colors %}
-            <option value="{{ color }}">{{ color }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <!-- Add to Cart Button -->
-        <div class="add-to-cart mt-3">
-          <button class="btn btn-primary">Add to Cart</button>
-        </div>
+        <!-- Form with product_variant_id -->
+        <form action="/cart/add_to_cart/{{ product.uid }}" method="post">
+          {% csrf_token %}
+
+          <!-- Size Selection -->
+          <div class="form-group">
+            <label for="size">Size:</label>
+            <select id="size" name="size" class="form-control">
+              <option value="">Select Size</option>
+              {% for size in unique_sizes %}
+              <option value="{{ size }}">{{ size }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Color Selection -->
+          <div class="form-group">
+            <label for="color">Color:</label>
+            <select id="color" name="color" class="form-control">
+              <option value="">Select Color</option>
+              {% for color in unique_colors %}
+              <option value="{{ color }}">{{ color }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Quantity Selection -->
+          <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              class="form-control"
+              value="1"
+              min="1"
+              style="max-width: 100px"
+            />
+          </div>
+
+          <!-- Add to Cart Button -->
+          <div class="add-to-cart mt-3">
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

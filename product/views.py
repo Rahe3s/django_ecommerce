@@ -9,14 +9,15 @@ def products_catalogue(request, uid):
     # Fetch all images related to the product
     product_images = product.product_images.all()
     
-    # Fetch all product variants related to the product
-    product_variants = product.variants.all()  # Assuming you have a related name or default manager
+   
+    product_variants = product.variants.all()
     unique_sizes = product_variants.values_list('size', flat=True).distinct()
     unique_colors = product_variants.values_list('color', flat=True).distinct()
 
     return render(request, 'product/product_catalogue.html', {
         'product': product,
         'product_images': product_images,
+        'product_variants':product_variants,
         'unique_sizes': unique_sizes,  # Pass unique sizes to the template
         'unique_colors': unique_colors,  # Pass unique colors to the template
     })

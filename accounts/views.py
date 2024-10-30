@@ -12,8 +12,6 @@ from django.contrib.auth import get_user_model
 
 
 
-
-
 def registration(request):
     if request.method == 'POST':
     
