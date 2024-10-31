@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block body %}
+{%load static%}
 <!-- Start Hero Section -->
 <div class="hero">
   <div class="container">
@@ -18,7 +19,7 @@
 <div class="untree_co-section before-footer-section">
   <div class="container">
     <div class="row mb-5">
-      <form class="col-md-12" method="post" action="{% url 'update_cart' %}">
+      <form class="col-md-12" method="post">
         {% csrf_token %}
         <div class="site-blocks-table">
           <table class="table">
@@ -34,47 +35,44 @@
             </thead>
             <tbody>
               {% for item in cart_items %}
-              <tr>
-                <td class="product-thumbnail">
-                  <img
-                    src="{{ item.images.first.image.url }}"
-                    alt="{{ item.product.product_name }}"
-                    class="img-fluid"
-                  />
-                </td>
-                <td class="product-name">
-                  <h2 class="h5 text-black">{{ item.product.product_name }}</h2>
-                  <p>Size: {{ item.variant.size }}, Color: {{ item.variant.color }}</p>
-                </td>
-                <td>${{ item.variant.product.price|floatformat:2 }}</td>
-                <td>
-                  <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px">
-                    <input
-                      type="number"
-                      name="quantity_{{ item.variant.uid }}"
-                      class="form-control text-center quantity-amount"
-                      value="{{ item.quantity }}"
-                      min="1"
-                      aria-label="Quantity"
-                    />
-                  </div>
-                </td>
-                <td>${{ item.total_price|floatformat:2 }}</td>
-
-                <td>
-                  <a href="{% url 'remove_from_cart' item.variant.uid %}" class="btn btn-black btn-sm">X</a>
-                </td>
+              <tr id="cart-item-{{ item.variant.uid }}">
+                  <td class="product-thumbnail">
+                      <img src="{{ item.images.first.image.url }}" alt="{{ item.product.product_name }}" class="img-fluid" />
+                  </td>
+                  <td class="product-name">
+                      <h2 class="h5 text-black">{{ item.product.product_name }}</h2>
+                      <p>Size: {{ item.variant.size }}, Color: {{ item.variant.color }}</p>
+                  </td>
+                  <td>${{ item.variant.product.price|floatformat:2 }}</td>
+                  <td>
+                    
+                      <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px">
+                          <input 
+                              type="number"
+                              id="quantity"
+                              name="quantity"
+                              class="form-control text-center quantity-amount"
+                              value="{{ item.quantity }}"
+                              min="1"
+                              aria-label="Quantity"
+                              onchange="updateCart('{{ item.variant.uid }}')"
+                              
+                          />
+                      </div>
+                  </td>
+                  <td>${{ item.total_price|floatformat:2 }}</td>
+                  <td>
+                      <a href="{% url 'remove_from_cart' item.variant.uid %}" class="btn btn-black btn-sm">X</a>
+                  </td>
               </tr>
               {% endfor %}
-            </tbody>
+          </tbody>
           </table>
         </div>
         <div class="row">
           <div class="col-md-6">
               <div class="row mb-5">
-                  <div class="col-md-6 mb-3 mb-md-0">
-                      <button type="submit" class="btn btn-black btn-sm btn-block">Update Cart</button>
-                  </div>
+                 
                   <div class="col-md-6">
                       <a href="{% url 'shop' %}" class="btn btn-outline-black btn-sm btn-block">Continue Shopping</a>
                   </div>
@@ -133,6 +131,8 @@
     </form>
   </div>
 </div>
-      
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{% static 'js/cart.js' %}"></script>      
 
 {% endblock %}
