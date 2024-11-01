@@ -49,18 +49,19 @@
                       <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px">
                           <input 
                               type="number"
-                              id="quantity"
+                              id="quantity_{{ item.variant.uid }}"
                               name="quantity"
-                              class="form-control text-center quantity-amount"
+                              class="form-control text-center quantity"
                               value="{{ item.quantity }}"
                               min="1"
                               aria-label="Quantity"
-                              onchange="updateCart('{{ item.variant.uid }}')"
+                              data-item-id="{{ item.id }}"
+                              
                               
                           />
                       </div>
                   </td>
-                  <td>${{ item.total_price|floatformat:2 }}</td>
+                  <td id="product-total-{{ item.id }}">${{ item.total_price|floatformat:2 }}</td>
                   <td>
                       <a href="{% url 'remove_from_cart' item.variant.uid %}" class="btn btn-black btn-sm">X</a>
                   </td>
@@ -103,16 +104,22 @@
                               <span class="text-black">Subtotal</span>
                           </div>
                           <div class="col-md-6 text-right">
-                              <strong class="text-black">${{ total_price|floatformat:2 }}</strong>
-                          </div>
+                            <strong class="cart-total" id="cart-total" style="color: rgba(0, 0, 0, 1) !important; font-weight: bolder;">
+                                ${{ total_price|floatformat:2 }}
+                            </strong>
+                        </div>
+                        
                       </div>
                       <div class="row mb-5">
                           <div class="col-md-6">
                               <span class="text-black">Total</span>
                           </div>
                           <div class="col-md-6 text-right">
-                              <strong class="text-black">${{ total_price|floatformat:2 }}</strong>
-                          </div>
+                            <strong class="cart-total" id="cart-total" style="color: rgba(0, 0, 0, 1) !important; font-weight: bolder;">
+                                ${{ total_price|floatformat:2 }}
+                            </strong>
+                        </div>
+                        
                       </div>
       
                       <div class="row">

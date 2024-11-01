@@ -1,40 +1,38 @@
 
-function updateCart(variantUid) {
-    const quantityElement = document.getElementById('quantity');
-    const resultElement = document.getElementById('result');
-    
-    // Ensure necessary elements are present
-    if (!quantityElement || !resultElement) return;
+$(document).ready(function() {
+    $('.quantity').on('input', function() {
+        var itemId = $(this).data('item-id'); // Get CartItem ID
+        var newQuantity = $(this).val();
 
-    const quantity = quantityElement.value;
-    const csrfTokenElement = document.querySelector('[name=csrfmiddlewaretoken]');
-    
-    // Abort if CSRF token is missing
-    if (!csrfTokenElement) return;
+        $.ajax({
+            url: '/cart/update_cart/',
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+                'item_id': itemId,
+                'new_quantity': newQuantity
+            },
+            success: function(response) {
+                console.log(response);
+                if (response.success) {
+                    
+                    console.log('Quantity updated successfully.');
+                    $('.cart-total').text(`$${response.cart_total.toFixed(2)}`);
+                    $(`#product-total-${itemId}`).text(`$${response.item_total.toFixed(2)}`);
+                    console.log("Updating product total:", `#product-total-${itemId}`, `$${response.item_total.toFixed(2)}`);
 
-    const csrfToken = csrfTokenElement.value;
-
-    fetch(`/cart/update_cart/${variantUid}/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({ quantity: quantity })
-    })
-    .then(response => response.ok ? response.json() : Promise.reject())
-    .then(data => {
-        // Update result if successful, or show an error message
-        resultElement.innerHTML = data.success
-            ? `<p>${data.message}</p><p>New Quantity: ${data.new_quantity}</p><p>Total Price: $${data.total_price}</p>`
-            : `<p>${data.message}</p>`;
-    })
-    .catch(() => {
-        // Display a generic error message
-        resultElement.innerHTML = `<p>There was an error processing your request. Please try again later.</p>`;
+                    // You may also update the total price dynamically here if needed
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert('An error occurred. Please try again.');
+            }
+        });
     });
-}
+});
+
 
     // document.addEventListener("DOMContentLoaded", function () {
     //     // Function to update cart item quantity

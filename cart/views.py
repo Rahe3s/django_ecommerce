@@ -3,6 +3,9 @@ from product.models import ProductVariant,products
 from .models import Cart, CartItem
 from django.contrib import messages
 from django.http import JsonResponse
+from django.db.models import Sum, F
+from decimal import Decimal
+
 
 def cart(request):
     cart_items = []
@@ -39,9 +42,12 @@ def cart(request):
         for item in user_cart_items:
             product_variant = item.product_variant
             product = product_variant.product
-            product_images = product.product_images.all()  # Adjust based on image fetching logic
+            product_images = product.product_images.all()
+            
+              # Adjust based on image fetching logic
             
             cart_items.append({
+                'id': item.id,
                 'variant': product_variant,
                 'product': product,
                 'images': product_images,
@@ -106,7 +112,7 @@ def add_to_cart(request, uid):
                 del request.session['cart']  # Remove the session cart
 
         else:
-#             # Logic to add the product to session
+            # Guest user logic
             cart = request.session.get('cart', [])
             product_exist = False
 
@@ -119,16 +125,17 @@ def add_to_cart(request, uid):
             if not product_exist:
                 cart_item = {
                     'product_variant_id': str(product_variant.uid),
-                    'quantity': quantity
-
+                    'quantity': quantity,
+                    'price': product_variant.product.price,
+                    'id': str(len(cart))  # Use the length of the cart as a unique ID
                 }
+                cart.append(cart_item)
 
-                cart.append(cart_item)  # Add item to the cart list in session
-            request.session['cart'] = cart 
+            request.session['cart'] = cart
+            request.session.modified = True
             messages.success(request, "Product added to your session cart.")
-            print("success")
-        return redirect('cart') 
-
+        
+        return redirect('cart')
     return redirect('product_catalogue', uid=uid)  
 
   
@@ -136,54 +143,71 @@ def add_to_cart(request, uid):
 
     
 
-def update_cart(request, uid):
-    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        new_quantity = int(request.POST.get('quantity', 1))
-        product_variant = get_object_or_404(ProductVariant, uid=uid)
+
+def update_cart(request):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        new_quantity = request.POST.get('new_quantity')
 
         if request.user.is_authenticated:
-            # Update for authenticated user
-            cart_item = CartItem.objects.filter(cart__user=request.user, product_variant=product_variant).first()
-            if cart_item:
+            try:
+                # Debug: Log the received item_id and user
+                print(f"Updating cart item - User: {request.user}, Item ID: {item_id}")
+
+                # Fetch cart and item
+                cart, created = Cart.objects.get_or_create(user=request.user)
+                cart_item = CartItem.objects.get(cart=cart, id=item_id)  # Only get, don't create
+
+                # Update quantity
                 cart_item.quantity = new_quantity
                 cart_item.save()
-                
-                # Optional: calculate updated total for user's cart
-                total_price = sum(
-                    item.quantity * item.product_variant.product.price for item in CartItem.objects.filter(cart=cart_item.cart)
-                )
+                item_total = Decimal(cart_item.quantity) * Decimal(cart_item.product_variant.product.price)
+                print(item_total)
+
+
+                # Calculate updated total price for the entire cart
+                cart_total = cart.items.aggregate(
+                    total=Sum(F('quantity') * F('product_variant__product__price'))
+                )['total']
+
 
                 return JsonResponse({
-                    'message': "Quantity updated.",
                     'success': True,
-                    'new_quantity': new_quantity,
-                    'total_price': total_price
+                    'item_total': float(item_total),  # Ensure it's a float or Decimal
+                    'cart_total': float(cart_total), 
                 })
-            else:
-                return JsonResponse({'message': "Item not found in your cart.", 'success': False})
+
+            except CartItem.DoesNotExist:
+                # Debug: Log if item not found
+                print(f"Cart item with ID {item_id} not found for user {request.user}")
+                return JsonResponse({'success': False, 'message': 'Cart item not found.'})
+
+            except Exception as e:
+                return JsonResponse({'success': False, 'message': str(e)})
 
         else:
-            # Update session cart for guest users
+            # Guest user logic
             cart = request.session.get('cart', [])
-            for item in cart:
-                if item['variant'] == str(product_variant.uid):
-                    item['quantity'] = new_quantity
-                    request.session['cart'] = cart
-                    request.session.modified = True  # Ensure session is saved
+            for cart_items in cart:
+                if cart_items['id'] == item_id:  # Match the ID to find the item
+                    cart_items['quantity'] = new_quantity
+                    print('1')
+                    break
+            request.session['cart'] = cart
+            request.session.modified = True
 
-                    # Optional: calculate total price in session cart
-                    total_price = sum(
-                        int(i['quantity']) * product_variant.product.price for i in cart if 'variant' in i
-                    )
+            # Calculate total price for guest cart
+            total_price = sum(item['quantity'] * item['price'] for item in cart)
 
-                    return JsonResponse({
-                        'message': "Quantity updated in session cart.",
-                        'success': True,
-                        'new_quantity': new_quantity,
-                        'total_price': total_price
-                    })
+            return JsonResponse({
+                'success': True,
+                'new_quantity': new_quantity,
+                'cart_total': total_price,
+                'item_total': cart_items['quantity'] * cart_items['price'],  # Calculate the item total
+            })
 
-    return JsonResponse({'message': 'Invalid request.', 'success': False})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
 
 
 
