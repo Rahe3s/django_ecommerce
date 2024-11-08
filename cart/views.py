@@ -59,13 +59,17 @@ def cart(request):
         # Fetch cart items from session for guests
         cart = request.session.get('cart', [])
         
+        
+        
         for item in cart:
+            print('iti',item['id'])
             product_variant = ProductVariant.objects.filter(uid=item['product_variant_id']).first()
             if product_variant:
                 product = product_variant.product
                 product_images = product.product_images.all()  # Assuming this is how you fetch product images
                 
                 cart_items.append({
+                    'id': item['id'],
                     'variant': product_variant,
                     'product': product,
                     'images': product_images,
@@ -118,6 +122,7 @@ def add_to_cart(request, uid):
 
             for item in cart:
                 if item['product_variant_id'] == str(product_variant.uid):
+                    print('iti',item['id'])
                     item['quantity'] += quantity
                     product_exist = True
                     break
@@ -129,6 +134,7 @@ def add_to_cart(request, uid):
                     'price': product_variant.product.price,
                     'id': str(len(cart))  # Use the length of the cart as a unique ID
                 }
+                print(cart_item['id'])
                 cart.append(cart_item)
 
             request.session['cart'] = cart
@@ -140,14 +146,13 @@ def add_to_cart(request, uid):
 
   
 
-
     
 
 
 def update_cart(request):
     if request.method == 'POST':
         item_id = request.POST.get('item_id')
-        new_quantity = request.POST.get('new_quantity')
+        new_quantity = int(request.POST.get('new_quantity'))
 
         if request.user.is_authenticated:
             try:
@@ -186,58 +191,94 @@ def update_cart(request):
                 return JsonResponse({'success': False, 'message': str(e)})
 
         else:
-            # Guest user logic
+    # Guest user logic
+            
             cart = request.session.get('cart', [])
-            for cart_items in cart:
-                if cart_items['id'] == item_id:  # Match the ID to find the item
-                    cart_items['quantity'] = new_quantity
-                    print('1')
+             # Initialize cart_item to None
+            
+    # Loop through the cart to find the item and update its quantity
+            for cart_item in cart:
+                print('cart_item id',cart_item['id'] )
+                print('item_id',item_id)
+                if cart_item['id'] == item_id:  # Match the ID to find the item
+                    cart_item['quantity'] = new_quantity
+                    
+                     # Set cart_item to the found item for later use
                     break
-            request.session['cart'] = cart
-            request.session.modified = True
 
-            # Calculate total price for guest cart
-            total_price = sum(item['quantity'] * item['price'] for item in cart)
+    # Check if the item was found and update session
+            if cart_item:
+                request.session['cart'] = cart
+                request.session.modified = True
 
-            return JsonResponse({
-                'success': True,
-                'new_quantity': new_quantity,
-                'cart_total': total_price,
-                'item_total': cart_items['quantity'] * cart_items['price'],  # Calculate the item total
-            })
+        # Calculate item total and cart total
+                print('quanr',new_quantity)
+                print(cart_item['quantity'])
+                print(f"Updating cart item - User: {Cart.uid}, Item ID: {item_id}")
+                item_total = cart_item['quantity'] * cart_item['price']
+                cart_total = sum(item['quantity'] * item['price'] for item in cart)
+
+                print(f"Debug - Updated quantity for cart item: {cart_item['quantity']}")
+
+                print(f"Debug - Calculated item_total: {item_total}")
+                print(f"Debug - Calculated cart_total: {cart_total}")
+
+                return JsonResponse({
+                    'success': True,
+                    'cart_total': cart_total,
+                    'item_total': item_total
+                })
+            else:
+                return JsonResponse({'success': False, 'message': 'Cart item not found in session cart.'})
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
 
 
 
-def remove_from_cart(request, uid):
-    product_variant = get_object_or_404(ProductVariant, uid=uid)
 
-    if request.user.is_authenticated:
-        # Remove the item from the authenticated user's database cart
-        cart_item = CartItem.objects.filter(cart__user=request.user, product_variant=product_variant).first()
-        
-        if cart_item:
-            cart_item.delete()
-            messages.success(request, "Item removed from your cart.")
-            success = True
+
+def remove_from_cart(request):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+
+        if request.user.is_authenticated:
+            try:
+                cart, created = Cart.objects.get_or_create(user=request.user)
+                cart_item = CartItem.objects.get(cart=cart, id=item_id)
+                
+                # Delete the cart item
+                cart_item.delete()
+
+                # Calculate updated total price for the entire cart
+                cart_total = cart.items.aggregate(
+                    total=Sum(F('quantity') * F('product_variant__product__price'))
+                )['total'] or 0
+
+                return JsonResponse({
+                    'success': True,
+                    'cart_total': float(cart_total),
+                })
+
+            except CartItem.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'Item not found in cart.'})
+
         else:
-            messages.error(request, "Item not found in your cart.")
-            success = False
+            # For guest user: remove item from session cart
+            cart = request.session.get('cart', [])
+            updated_cart = [item for item in cart if item['id'] != item_id]
 
-    else:
-        # For guest users, update the cart stored in the session
-        cart = request.session.get('cart', [])
-        cart = [item for item in cart if item['variant'] != str(product_variant.uid)]
-        request.session['cart'] = cart
-        request.session.modified = True  # Save session changes
-        messages.success(request, "Item removed from your session cart.")
-        success = True
+            if len(cart) != len(updated_cart):
+                request.session['cart'] = updated_cart
+                request.session.modified = True
 
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        # Return a JSON response for AJAX requests
-        return JsonResponse({'success': success})
+                cart_total = sum(item['quantity'] * item['price'] for item in updated_cart)
 
-    return redirect('cart')
+                return JsonResponse({
+                    'success': True,
+                    'cart_total': cart_total
+                })
+            else:
+                return JsonResponse({'success': False, 'message': 'Item not found in session cart.'})
 
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})

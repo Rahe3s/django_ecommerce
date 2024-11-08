@@ -18,8 +18,8 @@
 
 <div class="untree_co-section before-footer-section">
   <div class="container">
-    <div class="row mb-5">
-      <form class="col-md-12" method="post">
+    <div class="row mb-5 item_display">
+      <form class="col-md-12 " method="post">
         {% csrf_token %}
         <div class="site-blocks-table">
           <table class="table">
@@ -35,7 +35,7 @@
             </thead>
             <tbody>
               {% for item in cart_items %}
-              <tr id="cart-item-{{ item.variant.uid }}">
+              <tr id="cart-item-{{ item.id }}">
                   <td class="product-thumbnail">
                       <img src="{{ item.images.first.image.url }}" alt="{{ item.product.product_name }}" class="img-fluid" />
                   </td>
@@ -59,11 +59,20 @@
                               
                               
                           />
+
+                          
+
                       </div>
                   </td>
                   <td id="product-total-{{ item.id }}">${{ item.total_price|floatformat:2 }}</td>
                   <td>
-                      <a href="{% url 'remove_from_cart' item.variant.uid %}" class="btn btn-black btn-sm">X</a>
+                    <button 
+                      type="button" 
+                      data-item-id="{{ item.id }}" 
+                      class="btn btn-black btn-sm remove-from-cart">
+                      X
+                    </button>
+                 
                   </td>
               </tr>
               {% endfor %}

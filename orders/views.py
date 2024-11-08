@@ -1,4 +1,5 @@
 from django.shortcuts import render
 
 def checkout(request):
-    return render(request, 'checkout/chekout.html')
+    print("Checkout view hit!")
+    return render(request, 'checkout/checkout.html')
