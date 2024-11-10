@@ -1,0 +1,11 @@
+{% extends "dashboard/dashboard.html" %} {% block content %}
+<div class="form-container">
+  <h1>Add Coupon</h1>
+  <form method="POST">
+    {% csrf_token %}
+    <div>{{ coupon_form.as_p }}</div>
+    <button type="submit">Update Coupon</button>
+  </form>
+  <a href="{% url 'banner_coupon' %}">Back to Coupon Management</a>
+</div>
+{% endblock %}

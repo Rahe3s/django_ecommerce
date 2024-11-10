@@ -16,6 +16,13 @@ urlpatterns = [
     path('add-variant/', views.add_product_variant, name='add_product_variant'),
     path('variants/<uuid:uid>/update/', views.update_product_variant, name='update_product_variant'),
     path('variants/<uuid:uid>/delete/', views.delete_product_variant, name='delete_product_variant'),
+    path('banner_coupon/', views.banner_coupon_view, name='banner_coupon'),
+    path('add_coupon/', views.add_coupon, name='add_coupon'),
+    path('coupons/<uuid:uid>/update/', views.update_coupon, name='update_coupon'),
+    path('coupons/<uuid:uid>/delete/', views.delete_coupon, name='delete_coupon'),
+
+
+   
 
 
     

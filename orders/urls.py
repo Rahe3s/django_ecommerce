@@ -2,9 +2,9 @@ from django.urls import path
 
 from . import views
 
-app_name = 'orders'
 
 
 urlpatterns = [
     path("", views.checkout, name='checkout'),
+    path('apply_coupon/', views.apply_coupon, name='apply_coupon'),
 ]

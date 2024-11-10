@@ -2,6 +2,8 @@ from django.shortcuts import render,redirect,get_object_or_404
 from product.forms import CategoryForm,ProductsForm,ProductImageFormSet,ProductVariantForm,ProductImageUpdateFormSet
 from product.models import Category,products,productImages,ProductVariant
 from accounts.models import User_Details
+from orders.models import Coupons
+from orders.forms import CouponForm
 from django.core.paginator import Paginator
 
 def admin_dashboard(request):
@@ -140,3 +142,35 @@ def update_product_variant(request, uid):
         form = ProductVariantForm(instance=variant)
     return render(request, 'dashboard/update_product_variant.html', {'product_variant_form': form, 'variant': variant})
 
+def banner_coupon_view(request):
+    coupons = Coupons.objects.all()
+    return render(request,'dashboard/banner_coupon.html' ,{'coupons':coupons })
+
+def add_coupon(request):
+    if request.method == 'POST':
+        coupon_form = CouponForm(request.POST)
+        if coupon_form.is_valid():
+            coupon_form.save()
+            return redirect('banner_coupon')  # Redirect to the variant management page
+    else:
+        coupon_form = CouponForm()
+    return render(request, 'dashboard/add_coupon.html', {'coupon_form': coupon_form})   
+
+
+def update_coupon(request, uid):
+    coupon = get_object_or_404(Coupons, uid=uid)
+    if request.method == 'POST':
+        coupon_form = CouponForm(request.POST, instance=coupon)
+        if coupon_form.is_valid():
+            coupon_form.save()
+            return redirect('banner_coupon')
+    else:
+        coupon_form = CouponForm(instance=coupon)
+    
+    return render(request, 'dashboard/update_coupon.html', {'coupon_form': coupon_form, 'coupon': coupon})
+
+
+def delete_coupon(request, uid):
+    coupon = get_object_or_404(Coupons, uid=uid)
+    coupon.delete()
+    return redirect('banner_coupon')
