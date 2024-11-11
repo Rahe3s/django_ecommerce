@@ -17,61 +17,51 @@
 
 <div class="untree_co-section">
   <div class="container">
-    <!-- <div class="row mb-5">
-      <div class="col-md-12">
-        <div class="border p-4 rounded" role="alert">
-          Returning customer? <a href="#">Click here</a> to login
-        </div>
-      </div>
-    </div> -->
-
     <div class="row">
       <!-- Billing Details Section -->
       <div class="col-md-6 mb-5">
-        <h2 class="h3 mb-3 text-black">Billing Details</h2>
-        <form class="p-3 p-lg-5 border bg-white">
-          <div class="form-group">
-            <label for="c_country" class="text-black">Country <span class="text-danger">*</span></label>
-            <select id="c_country" class="form-control">
-              <option value="">Select a country</option>
-              <option value="bangladesh">Bangladesh</option>
-              <option value="algeria">Algeria</option>
-              <!-- Add more countries as needed -->
-            </select>
+          <h2 class="h3 mb-3 text-black">Billing Details</h2>
+  
+          <!-- Toggle Buttons -->
+          <div class="mb-3">
+              <button id="toggle-address-list" type="button" class="btn btn-primary">Show Available Addresses</button>
+              <button id="toggle-address-form" type="button" class="btn btn-secondary">Add New Address</button>
           </div>
-
-          <div class="form-group row">
-            <div class="col-md-6">
-              <label for="c_fname" class="text-black">First Name <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="c_fname" name="c_fname" />
-            </div>
-            <div class="col-md-6">
-              <label for="c_lname" class="text-black">Last Name <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="c_lname" name="c_lname" />
-            </div>
+  
+          <!-- Available Addresses Section -->
+          <div id="address-list" class="p-3 border bg-white" >
+            <h4 class="text-black mb-3">Available Addresses</h4>
+            <form id="select-address-form">
+                <ul>
+                    {% for address in addresses %}
+                        <li>
+                            <label>
+                                <input type="radio" name="selected_address" value="{{ address.uid }}" required>
+                                {{ address.name }} - {{ address.address }}, {{ address.place }}, {{ address.state }}, {{ address.PIN }}
+                            </label>
+                        </li>
+                    {% empty %}
+                        <li>No saved addresses available.</li>
+                    {% endfor %}
+                      </ul>
+            </form>
+        </div>
+    
+        <!-- Add New Address Form -->
+        <div id="address-form" class="p-3 p-lg-5 border bg-white" style="display: none;">
+            <form id="address"  method="post" >
+                {% csrf_token %}
+                {{ form.as_p }}
+    
+                <button type="submit" class="btn btn-primary">Save Address</button>
+            </form>
           </div>
-
-          <div class="form-group">
-            <label for="c_address" class="text-black">Address <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="c_address" name="c_address" placeholder="Street address" />
-          </div>
-
-          <div class="form-group">
-            <label for="c_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
-            <input type="email" class="form-control" id="c_email_address" name="c_email_address" />
-          </div>
-
-          <div class="form-group">
-            <label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
-            <input type="tel" class="form-control" id="c_phone" name="c_phone" placeholder="Phone Number" />
-          </div>
-
-          <div class="form-group">
-            <label for="c_order_notes" class="text-black">Order Notes</label>
-            <textarea class="form-control" id="c_order_notes" name="c_order_notes" placeholder="Write your notes here..."></textarea>
-          </div>
-        </form>
       </div>
+    
+  
+  
+    
+
 
       <!-- Order Summary and Coupon Section -->
       <div class="col-md-6">
@@ -92,6 +82,7 @@
               </div>
           </form>
       </div>
+    
       
         
         

@@ -1,5 +1,5 @@
 from django import forms
-from . models import Coupons
+from . models import Coupons,Address
 
 class CouponForm(forms.ModelForm):
     
@@ -15,3 +15,17 @@ class CouponForm(forms.ModelForm):
             'min_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'minimum amount','autocomplete': 'off'}),
         }
 
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ['name', 'phone', 'address', 'place', 'PIN', 'district', 'state']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Full Name'}),
+            'state': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street Address'}),
+            'PIN': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postal Code'}),
+            'place': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Place'}),
+            'district': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'District'}),
+        }

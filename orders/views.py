@@ -1,20 +1,55 @@
-from django.shortcuts import render
-from .models import Coupons
+from django.shortcuts import render,redirect
+from .models import Coupons,Address
 from cart.models import CartItem,Cart
 from django.http import JsonResponse
+from .forms import AddressForm
+from django.contrib import messages
+
 
 def checkout(request):
+    # Retrieve or create the user's cart
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_items = CartItem.objects.filter(cart=cart)
-    cart_total = sum(item.product_variant.product.price*item.quantity for item in cart_items)
-    available_coupons = Coupons.objects.filter(min_amount__lte=cart_total)
-    
+    cart_total = sum(item.product_variant.product.price * item.quantity for item in cart_items)
 
+    # Get available coupons based on the cart total
+    available_coupons = Coupons.objects.filter(min_amount__lte=cart_total)
+
+    # Retrieve the user's saved addresses
+    addresses = Address.objects.filter(user=request.user)
+    form = AddressForm()
+
+
+    # Pass all necessary data to the template
     return render(request, 'checkout/checkout.html', {
-        'cart_items':cart_items,
+        'cart_items': cart_items,
         'cart_total': cart_total,
-        'available_coupons':available_coupons
+        'available_coupons': available_coupons,
+        'addresses': addresses,
+        'form': form,
     })
+
+from django.http import JsonResponse
+from .models import Address
+from .forms import AddressForm
+
+def add_address(request):
+    if request.method == 'POST':
+        form = AddressForm(request.POST)
+        if form.is_valid():
+            address = form.save(commit=False)
+            address.user = request.user
+            address.save()
+
+            # Fetch updated list of addresses
+            addresses = Address.objects.filter(user=request.user).values(
+                'name', 'address', 'place', 'state', 'PIN'
+            )
+            return JsonResponse({'success': True, 'addresses': list(addresses)})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
 def apply_coupon(request):
     if request.method == 'POST':
