@@ -16,7 +16,7 @@ def checkout(request):
     available_coupons = Coupons.objects.filter(min_amount__lte=cart_total)
 
     # Retrieve the user's saved addresses
-    addresses = Address.objects.filter(user=request.user)
+    addresses = Address.objects.filter(user=request.user)[:3]
     form = AddressForm()
 
 
@@ -29,9 +29,6 @@ def checkout(request):
         'form': form,
     })
 
-from django.http import JsonResponse
-from .models import Address
-from .forms import AddressForm
 
 def add_address(request):
     if request.method == 'POST':
@@ -50,6 +47,8 @@ def add_address(request):
             return JsonResponse({'success': False, 'errors': form.errors})
 
     return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+
 
 def apply_coupon(request):
     if request.method == 'POST':

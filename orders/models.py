@@ -30,6 +30,7 @@ class Address(models.Model):
     PIN = models.CharField(max_length=20)
     place = models.CharField(max_length=100)
     district = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f" {self.name} - {self.address}, {self.place}, {self.place}"
+        return f" {self.name} - {self.address}"

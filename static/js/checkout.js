@@ -42,13 +42,10 @@ $(document).ready(function() {
     });
     const addressList = $("#address-list");
     const addressForm = $("#address-form");
-    const addressListContainer = addressList.find("ul");
+
 
     // Toggle Address List
-    $("#toggle-address-list").on("click", function () {
-        addressList.toggle(); // Show/hide the address list
-        addressForm.hide(); // Hide the form if it's open
-    });
+   
 
     // Toggle Address Form
     $("#toggle-address-form").on("click", function () {
@@ -84,14 +81,18 @@ $(document).ready(function () {
                     addressListContainer.empty();
 
                     // Iterate through the returned addresses and create radio buttons for each address
-                    $.each(data.addresses, function (index, address) {
+                    $.each(data.addresses.slice(0,3), function (index, address) {
                         const radioButton = `
-                            <li>
-                                <label>
-                                    <input type="radio" name="address" value="${address.id}">
-                                    ${address.name} - ${address.address}, ${address.place}, ${address.state}, ${address.PIN}
-                                </label>
-                            </li>
+                            <li class="mb-2">
+                        <div class="p-2 border rounded bg-white">
+                            <label class="d-flex align-items-center">
+                                <input type="radio" name="selected_address" value="{{ address.uid }}" required class="me-2">
+                                <span>
+                                    {{ address.name }} - {{ address.address }}, {{ address.place }}, {{ address.state }}, {{ address.PIN }}
+                                </span>
+                            </label>
+                        </div>
+                    </li>
                         `;
                         addressListContainer.append(radioButton);
                     });

@@ -30,6 +30,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('admin_dashboard/', include('admin_dashboard.urls')),
     path('product_catologue/<uuid:uid>/', include('product.urls')),
+    path('order/', include('payment.urls')),
 
 
    
