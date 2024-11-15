@@ -3,7 +3,10 @@ from .models import Coupons,Address
 from cart.models import CartItem,Cart
 from django.http import JsonResponse
 from .forms import AddressForm
+from django.template.loader import render_to_string
+
 from django.contrib import messages
+
 
 
 def checkout(request):
@@ -16,7 +19,7 @@ def checkout(request):
     available_coupons = Coupons.objects.filter(min_amount__lte=cart_total)
 
     # Retrieve the user's saved addresses
-    addresses = Address.objects.filter(user=request.user)[:3]
+    addresses = Address.objects.filter(user=request.user).order_by('-created_at')[:3]
     form = AddressForm()
 
 
@@ -31,24 +34,30 @@ def checkout(request):
 
 
 def add_address(request):
-    if request.method == 'POST':
+    if request.method == 'POST' and request.user.is_authenticated:
         form = AddressForm(request.POST)
+        
         if form.is_valid():
+            # Save the new address and link it to the user
             address = form.save(commit=False)
             address.user = request.user
             address.save()
 
-            # Fetch updated list of addresses
-            addresses = Address.objects.filter(user=request.user).values(
-                'name', 'address', 'place', 'state', 'PIN'
-            )
-            return JsonResponse({'success': True, 'addresses': list(addresses)})
+            # Retrieve the updated address list
+            addresses = Address.objects.filter(user=request.user).order_by('-created_at')[:3]
+
+            # Render the updated address list as HTML
+            address_list_html = render_to_string('checkout/address_list_partial.html', {'addresses': addresses})
+
+            # Return success response with the rendered HTML
+            return JsonResponse({'success': True, 'address_list_html': address_list_html})
+        
         else:
+            # Return form errors if form is invalid
             return JsonResponse({'success': False, 'errors': form.errors})
-
-    return JsonResponse({'success': False, 'message': 'Invalid request method'})
-
-
+    
+    # Return an error if request is not POST or user is not authenticated
+    return JsonResponse({'success': False, 'errors': 'Invalid request.'})
 
 def apply_coupon(request):
     if request.method == 'POST':

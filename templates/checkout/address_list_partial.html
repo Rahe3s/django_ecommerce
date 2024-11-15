@@ -1,0 +1,25 @@
+<!-- templates/checkout/address_list_partial.html -->
+<h4 class="text-dark mb-3">Available Addresses</h4>
+<ul class="list-unstyled" id="address-list-ul">
+  {% for address in addresses %}
+  <li class="mb-2">
+    <div class="p-2 border rounded bg-white">
+      <label class="d-flex align-items-center">
+        <input
+          type="radio"
+          name="selected_address"
+          value="{{ address.uid }}"
+          required
+          class="me-2"
+        />
+        <span>
+          {{ address.name }} - {{ address.address }}, {{ address.place }}, 
+          {{ address.state }}, {{ address.PIN }}
+        </span>
+      </label>
+    </div>
+  </li>
+  {% empty %}
+  <li>No saved addresses available.</li>
+  {% endfor %}
+</ul>
