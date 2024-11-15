@@ -119,13 +119,19 @@
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod">
+        <input class="form-check-input" type="radio" name="payment_method" id="cod" value="COD">
         <label class="form-check-label" for="cod">
           Cash on Delivery
         </label>
       </div>
     </div>
-            <button class="btn btn-primary btn-lg btn-block">Place Order</button>
+    <form method="post" action="{% url 'place_order' %}"> 
+      {% csrf_token %} 
+      <input type="hidden" name="selected_address" value="{{ form.selected_address.value }}">
+      <input type="hidden" name="coupon" value="{{ form.coupon.value }}">
+      <input type="hidden" name="payment_method" value="{{ form.payment_method.value }}">
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Place Order</button> 
+    </form>
           </div>
         </div>
       </div>

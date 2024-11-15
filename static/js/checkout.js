@@ -87,8 +87,37 @@ $(document).ready(function () {
                 alert("An error occurred. Please try again.");
             },
         });
+        
+    });
+    $('.btn-primary.btn-lg.btn-block').click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/order/place_order/',
+            data: {
+                'selected_address': $('input[name="selected_address"]:checked').val(),
+                'coupon': $('#coupon').val(),
+                'payment_method': $('input[name="payment_method"]:checked').val(),
+                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    
+                    window.location.href = '/order/success/' ;  // Redirect to success page
+                } else if (response.status === 'redirect') {
+                    window.location.href = response.url;  // Redirect to payment page
+                } else {
+                    alert(response.message);  // Show error message
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);  // Debugging errors
+                alert('An error occurred. Please try again.');
+            }
+        });
     });
 });
+
 
 
 

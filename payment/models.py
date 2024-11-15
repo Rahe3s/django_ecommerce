@@ -46,7 +46,7 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)  # Quantity of the product ordered
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Price per item
     
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    
 
     def __str__(self):
         return f"{self.product_variant.product.name} (x{self.quantity})"
