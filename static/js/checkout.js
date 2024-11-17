@@ -103,7 +103,7 @@ $(document).ready(function () {
             success: function(response) {
                 if (response.status === 'success') {
                     
-                    window.location.href = '/order/success/' ;  // Redirect to success page
+                    window.location.href = '/order/success/'+response.order_id; ;  // Redirect to success page
                 } else if (response.status === 'redirect') {
                     window.location.href = response.url;  // Redirect to payment page
                 } else {

@@ -7,7 +7,7 @@ import uuid
 
 class Order(models.Model):
     # Unique identifier for the order
-    uid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    uid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     
     user = models.ForeignKey(User_Details, on_delete=models.CASCADE, null=True, blank=True, related_name='order')# Linking to the user who placed the order
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True)
@@ -39,7 +39,7 @@ class Order(models.Model):
     
 class OrderItem(models.Model):
     # Unique identifier for the order item
-    uid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    uid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)  # Linking to the order
     product_variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)  # Linking to the product variant (e.g., size, color)

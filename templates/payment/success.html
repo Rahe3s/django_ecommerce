@@ -1,4 +1,4 @@
-{%include 'head.html'%} {%load static%}
+{% include 'head.html' %} {% load static %}
 <body>
   <!-- Start Header/Navigation -->
   <nav
@@ -7,7 +7,6 @@
   >
     <div class="container">
       <a class="navbar-brand" href="{% url 'home' %}">Hype<span>.</span></a>
-
       <button
         class="navbar-toggler"
         type="button"
@@ -21,18 +20,45 @@
       </button>
     </div>
   </nav>
-  <!-- Start Hero Section -->
-  <div class="hero">
-    <div class="container">
-      <div class="row justify-content-between">
-        <div class="col-lg-5">
-          <div class="intro-excerpt">
-            <h1>Success</h1>
-          </div>
-        </div>
-        <div class="col-lg-7"></div>
-      </div>
+
+  <!-- Start Success Message -->
+  <div class="container mt-5">
+    <div class="text-center">
+      <h1 class="display-4 text-success">Order Placed Successfully!</h1>
+      <p class="lead">
+        Thank you for your purchase! Your order has been successfully placed.
+      </p>
+      <p><strong>Order ID:</strong> {{ order_id }}</p>
+      <hr />
+      <h4>Order Summary</h4>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <strong>Total Items:</strong> {{ order_total_items }}
+        </li>
+        <li class="list-group-item">
+          <strong>Subtotal:</strong> ₹{{ cart_total }}
+        </li>
+        <li class="list-group-item">
+          <strong>Discount:</strong> ₹{{ discount_amount }}
+        </li>
+        <li class="list-group-item">
+          <strong>Final Amount:</strong> ₹{{ final_amount }}
+        </li>
+        <li class="list-group-item">
+          <strong>Payment Method:</strong> {{ payment_method }}
+        </li>
+      </ul>
+      <hr />
+      <a href="{% url 'home' %}" class="btn btn-primary mt-3"
+        >Continue Shopping</a
+      >
     </div>
   </div>
-  <!-- End Hero Section -->
+
+  <!-- Footer -->
+  <footer class="footer mt-auto py-3 bg-dark text-white text-center">
+    <div class="container">
+      <span>© {{ year }} Hype. All rights reserved.</span>
+    </div>
+  </footer>
 </body>

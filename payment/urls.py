@@ -7,6 +7,6 @@ from . import views
 urlpatterns = [
     path("place_order/", views.place_order, name='place_order'),
     path("payment/", views.payment_page, name='payment_page'),
-    path("success/", views.success_page, name='success_page'),
+    path("success/<uuid:uid>", views.success_page, name='success_page'),
 
 ]
