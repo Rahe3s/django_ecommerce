@@ -1,0 +1,74 @@
+{% extends "user_profile/user_profile.html" %} {% block profile_content%}
+<!-- Main Content -->
+
+<div class="p-3">
+    <h2>Your Recent Orders</h2>
+    {% if page_obj %}
+    <div class="order-list">
+      {% for order in page_obj %}
+      <div class="order-card">
+        <p><strong>Order ID:</strong> {{ order.uid }}</p>
+        <p><strong>Date:</strong> {{ order.created_at|date:"d M Y" }}</p>
+        <p><strong>Total Amount:</strong> ${{ order.final_amount }}</p>
+        <p><strong>Status:</strong> {{ order.get_order_status_display }}</p>
+  
+        <h4>Items:</h4>
+        <ul>
+          {% for item in order.items.all %}
+          <li>
+            {{ item.product_variant.product.name }} ({{ item.product_variant.size }}, {{ item.product_variant.color }}) - 
+            {{ item.quantity }} x ${{ item.price }}
+          </li>
+          {% endfor %}
+        </ul>
+  
+        <!-- Buttons -->
+        <div class="order-buttons">
+    <!-- View Details Button -->
+    <a href="{% url 'order_detail' order.uid %}" class="btn btn-primary">View Details</a>
+
+    <!-- Return Button (visible only for delivered orders that are eligible for return) -->
+    {% if order.order_status == "delivered" and order.return_status == "no_request" %}
+        <a href="{% url 'return_order' order.uid %}" class="btn btn-warning">Request Return</a>
+    {% elif order.order_status == "delivered" and order.return_status == "approved" %}
+        <span class="btn btn-warning disabled">Return Requested</span>
+    {% endif %}
+
+    <!-- Cancel Button (visible only for orders that are not yet cancelled or delivered) -->
+    {% if order.order_status != "cancelled" and order.order_status != "delivered" %}
+        <form method="post" action="{% url 'cancel_order' order.uid %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Cancel</button>
+        </form>
+    {% endif %}
+</div>
+
+      </div>
+      {% endfor %}
+    </div>
+  
+    <!-- Pagination Controls -->
+    <div class="pagination">
+      <span class="step-links">
+        {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; First</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+  
+        <span class="current">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+  
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+        {% endif %}
+      </span>
+    </div>
+    {% else %}
+    <p>No orders found.</p>
+    {% endif %}
+  </div>
+  
+
+{% endblock %}

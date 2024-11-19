@@ -1,0 +1,131 @@
+:root {
+    --primary: #6a6a6a;
+    --secondary: #3b5d50;
+    --light: #eff2f1;
+    --dark: #eff2f1;
+}
+
+.back-to-top {
+    position: fixed;
+    display: none;
+    right: 45px;
+    bottom: 45px;
+    z-index: 99;
+}
+
+/*** Layout ***/
+.sidebar {
+    background: #3b5d50;
+    height: auto;
+    overflow-y: auto;
+    padding-top: 20px; /* Optional padding for better spacing */
+}
+
+.content {
+    padding: 50px;
+    background: var(--dark);
+    box-sizing: border-box;  /* Optional padding for better layout */
+}
+
+.content_block{
+    padding: 20px;
+    border-radius: 25px;
+    border-style: solid;
+    border-width: 1px;
+    width: 60%; /* Block's width adapts to content */
+    height: auto;
+
+}
+
+/*** Navbar ***/
+.sidebar .navbar .navbar-nav .nav-link {
+    padding: 7px 20px;
+    color: var(--light);
+    font-weight: 500;
+    border-left: 3px solid var(--secondary);
+    border-radius: 0 30px 30px 0;
+    outline: none;
+}
+
+.sidebar .nav-link.active {
+    background-color: #117a8b; /* Darker shade for active */
+    border-radius: 4px; /* Rounded corners */
+    font-weight: bold; /* Highlight text */
+}
+
+.sidebar .nav-link:hover {
+    background-color: #138496; /* Lighter shade for hover */
+    border-radius: 4px; /* Rounded corners */
+}
+
+.sidebar .navbar .navbar-nav .nav-link:hover i,
+.sidebar .navbar .navbar-nav .nav-link.active i {
+    background: var(--secondary);
+    color: var(--dark);
+}
+
+.address-list {
+    display: grid;
+    justify-content: center;
+    flex-wrap: wrap; /* Allows multiple cards to wrap in a grid-like format */
+    gap: 15px; /* Space between cards */
+    margin-top: 20px;
+    
+}
+
+.address-card {
+    background: #f8f9fa; /* Light background for the card */
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Full width for small screens */
+     /* Limit max width for larger screens */
+    flex: 1; /* Allows cards to adjust size based on space */
+}
+
+.order-buttons {
+    margin-top: 15px;
+}
+
+.order-buttons .btn {
+    margin-right: 10px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #000;
+    border: none;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+}
+
+.order-list {
+    display: grid;
+    justify-content: center;
+    flex-wrap: wrap; /* Allows multiple cards to wrap in a grid-like format */
+    gap: 15px; /* Space between cards */
+    margin-top: 20px;
+    
+}
+
+.order-card {
+    background: #f8f9fa; /* Light background for the card */
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Full width for small screens */
+    /* Limit max width for larger screens */
+    flex: 1; /* Allows cards to adjust size based on space */
+}

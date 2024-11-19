@@ -40,7 +40,11 @@
       </ul>
 
       <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-        <li><a class="nav-link" href="{% url 'login_page' %}"><img src="{% static 'images/user.svg' %}" alt="User"></a></li>
+        <li>
+          <a class="nav-link" href="{% if user.is_authenticated %}{% url 'your_profile' %}{% else %}{% url 'login' %}{% endif %}">
+              <img src="{% static 'images/user.svg' %}" alt="User">
+          </a>
+      </li>
         <li><a class="nav-link" href="{% url 'cart' %}"><img src="{% static 'images/cart.svg' %}" alt="Cart"></a></li>
       </ul>
     </div>

@@ -1,0 +1,23 @@
+{% extends "user_profile/user_profile.html" %} {% block profile_content%}
+<!-- Main Content -->
+
+<div class="p-3 ">
+    <h1>Your Addresses</h1>
+    {% if addresses %}
+    <div class="address-list">
+        {% for address in addresses %}
+            <div class="address-card">
+                <p><strong>{{ address.name }}</strong> </p>
+                <p> {{ address.address }},{{ address.place }}</p>
+                <p>{{ address.district }},{{ address.state }},{{ address.PIN }} </p>
+                <p><strong>Phone</strong> {{ address.phone }}</p>
+                
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p>No addresses found.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

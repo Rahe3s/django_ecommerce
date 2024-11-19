@@ -5,6 +5,9 @@ from accounts.models import User_Details
 from orders.models import Coupons
 from orders.forms import CouponForm
 from django.core.paginator import Paginator
+from django.contrib import messages
+from payment.models import Order,Wallet
+from django.db import transaction
 
 def admin_dashboard(request):
 
@@ -174,3 +177,59 @@ def delete_coupon(request, uid):
     coupon = get_object_or_404(Coupons, uid=uid)
     coupon.delete()
     return redirect('banner_coupon')
+
+
+def order_management_view(request):
+    if request.method == 'POST':
+        order_uid = request.POST.get('order_uid')
+        order_status = request.POST.get('order_status')
+        payment_status = request.POST.get('payment_status')
+
+        try:
+            order = Order.objects.get(uid=order_uid)
+
+            # Handle return request logic
+            if 'request_return' in request.POST:
+                if order.order_status == 'delivered' and order.return_status == 'requested':
+                    order.return_status = 'requested'
+                    order.save()
+
+                    # Refund the wallet of the user
+                    if order.payment_status == 'paid':
+                        try:
+                            with transaction.atomic():
+                                user_wallet = Wallet.objects.get(user=order.user)
+                                user_wallet.balance += order.final_amount  # Refund the total amount
+                                user_wallet.save()
+
+                                # Update the order payment status to refunded or similar
+                                order.payment_status = 'refunded'
+                                order.save()
+
+                                messages.success(request, "Return request submitted and wallet refunded.")
+                        except Wallet.DoesNotExist:
+                            messages.error(request, "Error in processing wallet refund.")
+                    else:
+                        messages.error(request, "Order not paid, no refund possible.")
+                else:
+                    messages.error(request, "Invalid request or order status for return.")
+
+            # Handle order status and payment status update
+            elif order_status and payment_status:
+                order.order_status = order_status
+                order.payment_status = payment_status
+                order.save()
+                messages.success(request, "Order updated successfully!")
+
+            # Handle order cancellation
+            elif 'cancel_order' in request.POST:
+                order.order_status = 'cancelled'
+                order.payment_status = 'failed'
+                order.save()
+                messages.success(request, "Order cancelled successfully!")
+
+        except Order.DoesNotExist:
+            messages.error(request, "Order not found!")
+
+    orders = Order.objects.all()
+    return render(request, 'dashboard/order_management.html', {'orders': orders})

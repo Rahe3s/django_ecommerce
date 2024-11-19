@@ -30,6 +30,12 @@ class Order(models.Model):
                                                             ('delivered', 'Delivered'),
                                                             ('cancelled', 'Cancelled')],
                                     default='processing')  # Order status
+    return_status = models.CharField(max_length=20, choices=[('no_request', 'No Request'),
+                                                            ('requested', 'Requested'),
+                                                            ('approved', 'Approved'),
+                                                             ('rejected', 'Rejected'),
+                                                             ('completed', 'Completed'), ],
+                                    default='no_request')  # Order status
     
     created_at = models.DateTimeField(auto_now_add=True)  # Time of order creation
     updated_at = models.DateTimeField(auto_now=True)  # Time of last order update
@@ -50,3 +56,13 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product_variant.product.name} (x{self.quantity})"
+    
+
+class Wallet(models.Model):
+    user = models.ForeignKey(User_Details, on_delete=models.CASCADE, null=True, blank=True, related_name='wallet')
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}'s Wallet"
+
+   

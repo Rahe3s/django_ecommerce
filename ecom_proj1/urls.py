@@ -31,6 +31,7 @@ urlpatterns = [
     path('admin_dashboard/', include('admin_dashboard.urls')),
     path('product_catologue/<uuid:uid>/', include('product.urls')),
     path('order/', include('payment.urls')),
+    path('profile/', include('user_profile.urls')),
 
 
    
