@@ -50,6 +50,7 @@ class regForms(forms.ModelForm):
     
     def clean(self):
         cleaned_data = super().clean()
+        password = cleaned_data.get('phone')
         password = cleaned_data.get('password')
         confirm_password = cleaned_data.get('confirm_password')
 

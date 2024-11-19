@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+{%load static%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert</title>
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+    <style>
+        
+        .custom-alert-container {
+            max-width: 500px;
+            margin: 20px auto; /* Centers alerts on the page */
+        }
+        .custom-alert-container .alert {
+            margin-top: 10px;
+            transition: opacity 0.5s ease-in-out; /* Smooth fade-out animation */
+        }
+        .fade-out {
+            opacity: 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Alert Messages Section -->
+    {% if messages %}
+    <div class="custom-alert-container">
+        {% for message in messages %}
+        <div class="alert 
+            {% if message.tags == 'success' %}alert-success
+            {% elif message.tags == 'warning' %}alert-warning
+            {% elif message.tags == 'error' %}alert-danger
+            {% elif message.tags == 'info' %}alert-info
+            {% else %}alert-secondary
+            {% endif %}" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Auto-hide Alerts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const alerts = document.querySelectorAll('.custom-alert-container .alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.add('fade-out');
+                }, 5000); // Auto-hide after 5 seconds
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
