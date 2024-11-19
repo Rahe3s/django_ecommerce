@@ -1,7 +1,7 @@
 {% extends "dashboard/dashboard.html" %}
 {% block content %}
-<div class="p-3">
-    <h2>Order Management</h2>
+<div class="category-form-container">
+    <h1>Order Management</h1>
     {% if orders %}
         <table class="table table-striped">
             <thead>
@@ -52,11 +52,15 @@
                         </td>
                         <td>
                             {% if order.return_status == 'requested' %}
-                                <form method="post" action="{% url 'order_management' %}">
+                                <form method="post" action="{% url 'approve_return' order.uid %}">
                                     {% csrf_token %}
                                     <input type="hidden" name="order_uid" value="{{ order.uid }}">
-                                    <button type="submit" name="action_type" value="approve_return" class="btn btn-success btn-sm">Approve</button>
-                                    <button type="submit" name="action_type" value="reject_return" class="btn btn-danger btn-sm">Reject</button>
+                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+                                <form method="post" action="{% url 'reject_return' order.uid %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="order_uid" value="{{ order.uid }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
                                 </form>
                             {% else %}
                                 <span class="badge bg-secondary">{{ order.get_return_status_display }}</span>

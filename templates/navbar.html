@@ -41,7 +41,7 @@
 
       <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
         <li>
-          <a class="nav-link" href="{% if user.is_authenticated %}{% url 'your_profile' %}{% else %}{% url 'login' %}{% endif %}">
+          <a class="nav-link" href="{% if user.is_authenticated %}{% url 'your_profile' %}{% else %}{% url 'login_page' %}{% endif %}">
               <img src="{% static 'images/user.svg' %}" alt="User">
           </a>
       </li>

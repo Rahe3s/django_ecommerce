@@ -1,11 +1,9 @@
-
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 from cart.models import Cart, CartItem
 from .models import Order, OrderItem
 from orders.models import Coupons,Address
-from orders.forms import AddressForm
 from django.http import JsonResponse
 import uuid
 

@@ -182,54 +182,58 @@ def delete_coupon(request, uid):
 def order_management_view(request):
     if request.method == 'POST':
         order_uid = request.POST.get('order_uid')
-        order_status = request.POST.get('order_status')
-        payment_status = request.POST.get('payment_status')
+        order_status = request.POST.get('order_status','processing')
+        payment_status = request.POST.get('payment_status','pending')
 
         try:
             order = Order.objects.get(uid=order_uid)
-
-            # Handle return request logic
-            if 'request_return' in request.POST:
-                if order.order_status == 'delivered' and order.return_status == 'requested':
-                    order.return_status = 'requested'
-                    order.save()
-
-                    # Refund the wallet of the user
-                    if order.payment_status == 'paid':
-                        try:
-                            with transaction.atomic():
-                                user_wallet = Wallet.objects.get(user=order.user)
-                                user_wallet.balance += order.final_amount  # Refund the total amount
-                                user_wallet.save()
-
-                                # Update the order payment status to refunded or similar
-                                order.payment_status = 'refunded'
-                                order.save()
-
-                                messages.success(request, "Return request submitted and wallet refunded.")
-                        except Wallet.DoesNotExist:
-                            messages.error(request, "Error in processing wallet refund.")
-                    else:
-                        messages.error(request, "Order not paid, no refund possible.")
-                else:
-                    messages.error(request, "Invalid request or order status for return.")
-
-            # Handle order status and payment status update
-            elif order_status and payment_status:
-                order.order_status = order_status
-                order.payment_status = payment_status
-                order.save()
-                messages.success(request, "Order updated successfully!")
-
-            # Handle order cancellation
-            elif 'cancel_order' in request.POST:
-                order.order_status = 'cancelled'
-                order.payment_status = 'failed'
-                order.save()
-                messages.success(request, "Order cancelled successfully!")
-
+            order.order_status = order_status
+            order.payment_status = payment_status
+            order.save()
+            messages.success(request, "Order updated successfully!")
         except Order.DoesNotExist:
             messages.error(request, "Order not found!")
 
     orders = Order.objects.all()
     return render(request, 'dashboard/order_management.html', {'orders': orders})
+
+def approve_return(request, order_uid):
+    order = get_object_or_404(Order, uid=order_uid)
+
+    if order.return_status == 'requested':
+        try:
+            with transaction.atomic():
+                # Refund logic only if payment was completed
+                if order.payment_status == 'paid':
+                    user_wallet, _ = Wallet.objects.get_or_create(user=order.user, defaults={'balance': 0})
+                    user_wallet.balance += order.final_amount  # Refund the total amount
+                    user_wallet.save()
+
+                    # Update the payment status to refunded
+                    order.payment_status = 'refunded'
+
+                # Update order statuses
+                order.return_status = 'approved'
+                order.order_status = 'returned'
+                order.save()
+
+                messages.success(request, "Return approved, and wallet refunded if applicable.")
+        except Wallet.DoesNotExist:
+            messages.error(request, "Error: Wallet not found for the user.")
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
+    else:
+        messages.error(request, "Return request cannot be approved in the current state.")
+
+    return redirect('order_management')
+def reject_return(request, order_uid):
+    order = get_object_or_404(Order, uid=order_uid)
+
+    if order.return_status == 'requested':
+        order.return_status = 'rejected'
+        order.save()
+        messages.success(request, "Return request rejected.")
+    else:
+        messages.error(request, "No valid return request found for this order.")
+
+    return redirect('order_management')

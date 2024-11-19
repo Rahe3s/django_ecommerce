@@ -21,7 +21,9 @@ urlpatterns = [
     path('coupons/<uuid:uid>/update/', views.update_coupon, name='update_coupon'),
     path('coupons/<uuid:uid>/delete/', views.delete_coupon, name='delete_coupon'),
     path('order_management/', views.order_management_view, name='order_management'),
-
+    path('approve-return/<uuid:order_uid>/', views.approve_return, name='approve_return'),
+    path('reject-return/<uuid:order_uid>/', views.reject_return, name='reject_return'),
+    
 
    
 

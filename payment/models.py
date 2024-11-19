@@ -22,13 +22,16 @@ class Order(models.Model):
                                       default='cod')  # Payment method selected
     payment_status = models.CharField(max_length=20, choices=[('pending', 'Pending'), 
                                                              ('paid', 'Paid'), 
-                                                             ('failed', 'Failed')],
+                                                             ('failed', 'Failed'),
+                                                             ('refunded', 'refunded')],
                                       default='pending')  # Status of the payment
     
     order_status = models.CharField(max_length=20, choices=[('processing', 'Processing'), 
                                                             ('shipped', 'Shipped'),
                                                             ('delivered', 'Delivered'),
-                                                            ('cancelled', 'Cancelled')],
+                                                            ('cancelled', 'Cancelled'),
+                                                            ('returned', 'Returned'),
+                                                            ('return_requested','return_requested')],
                                     default='processing')  # Order status
     return_status = models.CharField(max_length=20, choices=[('no_request', 'No Request'),
                                                             ('requested', 'Requested'),
@@ -59,8 +62,11 @@ class OrderItem(models.Model):
     
 
 class Wallet(models.Model):
+    uid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User_Details, on_delete=models.CASCADE, null=True, blank=True, related_name='wallet')
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}'s Wallet"

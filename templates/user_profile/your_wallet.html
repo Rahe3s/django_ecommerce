@@ -1,9 +1,15 @@
-{% extends "user_profile/user_profile.html" %} {% block profile_content%}
-<!-- Main Content -->
-
+{% extends "user_profile/user_profile.html" %} {% block profile_content %}
 <div class="p-3">
-  <h1>your wallet</h1>
-  <p>This is your main content area.</p>
+  <h1>Your Wallet</h1>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Wallet Balance</h5>
+      <p class="card-text">Balance: ₹{{ wallet_balance }}</p>
+      <p class="card-text">
+        Last Updated: {{ last_updated|date:"F j, Y, g:i a" }}<br />
+        Created Date: {{ created_date|date:"F j, Y, g:i a" }}
+      </p>
+    </div>
+  </div>
 </div>
-
 {% endblock %}
