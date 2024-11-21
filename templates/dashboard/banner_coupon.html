@@ -1,46 +1,89 @@
-{% extends "dashboard/dashboard.html" %}
-
-{% block content %}
+{% extends "dashboard/dashboard.html" %} {% block content %}
 <div class="category-form-container">
-    
-    <h1>Discount Coupons</h1>
-    <table class="category-table">
+  <h1>Discount Coupons</h1>
+  <table class="category-table">
     <thead>
-        <tr>
+      <tr>
         <th>Coupon Name</th>
         <th>Description</th>
         <th>Minimum Amount</th>
         <th>Discount</th>
         <th>Actions</th>
-        </tr>
+      </tr>
     </thead>
-  <tbody>
-    {% for coupon in coupons %}
-    <tr>
-      <td>{{ coupon.name }}</td>
-      <td>{{ coupon.description }}</td>
-      <td>{{ coupon.min_amount }}</td>
-      <td>{{ coupon.discount }}</td>
-      
-      <td>
-        <a
-          href="{% url 'update_coupon' coupon.uid %}"
-          class="btn btn-primary mb-3"
-          >Edit</a
-        >
-        <a
-          href="{% url 'delete_coupon' coupon.uid %}"
-          class="btn btn-danger"
-          onclick="return confirm('Are you sure you want to delete this variant?');"
-          >Delete</a
-        >
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<a href="{% url 'add_coupon' %}" class="add-category-btn">Add Coupon</a>
-
+    <tbody>
+      {% for coupon in coupons %}
+      <tr>
+        <td>{{ coupon.name }}</td>
+        <td>{{ coupon.description }}</td>
+        <td>{{ coupon.min_amount }}</td>
+        <td>{{ coupon.discount }}</td>
+        <td>
+          <a
+            href="{% url 'update_coupon' coupon.uid %}"
+            class="btn btn-primary mb-3"
+            >Edit</a
+          >
+          <a
+            href="{% url 'delete_coupon' coupon.uid %}"
+            class="btn btn-danger"
+            onclick="return confirm('Are you sure you want to delete this variant?');"
+            >Delete</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{% url 'add_coupon' %}" class="add-category-btn">Add Coupon</a>
 </div>
-{%endblock%}
 
+<div class="category-form-container">
+  <h1>Banner Management</h1>
+  <table class="category-table">
+    <thead>
+      <tr>
+        <th>Banner Title</th>
+        <th>Description</th>
+        <th>Position</th>
+        <th>Image</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for banner in banners %}
+      <tr>
+        <td>{{ banner.title }}</td>
+        <td>{{ banner.description }}</td>
+        <td>{{ banner.position }}</td>
+        <td>
+          {% if banner.image %}
+          <img
+            src="{{ banner.image.url }}"
+            alt="{{ banner.title }}"
+            width="50"
+          />
+          {%endif%}
+        </td>
+
+        <td>
+          <a
+            href="{% url 'update_banner' banner.uid %}"
+            class="btn btn-primary mb-3"
+            >Edit</a
+          >
+          <a
+            href="{% url 'delete_banner' banner.uid %}"
+            class="btn btn-danger"
+            onclick="return confirm('Are you sure you want to delete this banner?');"
+            >Delete</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{% url 'add_banner' %}" class="add-category-btn">Add Banner</a>
+</div>
+
+{% endblock %}

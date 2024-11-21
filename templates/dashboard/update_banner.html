@@ -1,0 +1,10 @@
+{% extends "dashboard/dashboard.html" %} {% block content %}
+<div class="form-container">
+  <h1>Update Banner</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %} {{ banner_form.as_p }}
+    <button type="submit" class="btn btn-success mb-2">Update Banner</button>
+    <a href="{% url 'banner_coupon' %}" class="btn btn-light">Cancel</a>
+  </form>
+</div>
+{% endblock %}

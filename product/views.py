@@ -23,5 +23,3 @@ def products_catalogue(request, uid):
     })
 
 
-def add_to_cart(request, uid):
-    pass

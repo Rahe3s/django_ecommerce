@@ -40,19 +40,6 @@ $(document).ready(function() {
         });
 
     });
-    const addressList = $("#address-list");
-    const addressForm = $("#address-form");
-
-
-    // Toggle Address List
-   
-
-    // Toggle Address Form
-    // $("#toggle-address-form").on("click", function () {
-    //     addressForm.toggle(); // Show/hide the address form
-    //     addressList.hide(); // Hide the list if it's open
-    // });
-
       
    
 });

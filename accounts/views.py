@@ -107,7 +107,7 @@ def login_page(request):
     try:
         if request.user.is_authenticated:
             if request.user.is_staff:
-                return redirect('dashboard')
+                return redirect('admin_dashboard')
             else:
                 return redirect('home')
 
@@ -126,7 +126,7 @@ def login_page(request):
                     messages.success(request, f"Welcome back, {user.first_name}!")
 
                     if user.is_staff:
-                        return redirect('dashboard')
+                        return redirect('admin_dashboard')
                     else:
                         return redirect('home')
                 else:

@@ -3,20 +3,33 @@ from product.forms import CategoryForm,ProductsForm,ProductImageFormSet,ProductV
 from product.models import Category,products,productImages,ProductVariant
 from accounts.models import User_Details
 from orders.models import Coupons
+from home.models import Banner
 from orders.forms import CouponForm
+from home.forms import BannerForms
 from django.core.paginator import Paginator
 from django.contrib import messages
 from payment.models import Order,Wallet
 from django.db import transaction
 
 def admin_dashboard(request):
-
     return render(request,'dashboard/dashboard.html')
-
 
 def user_management_view(request):
     users = User_Details.objects.all()  
     return render(request, 'dashboard/user_management.html',{'users': users}) 
+
+def block_user(request, uid):
+    user = get_object_or_404(User_Details, uid=uid)
+    user.is_active = False
+    user.save()
+    return redirect('user_management') 
+
+def unblock_user(request, uid):
+    user = get_object_or_404(User_Details, uid=uid)
+    user.is_active = True
+    user.save()
+    return redirect('user_management')
+
 
 def category_management_view(request):
     categories = Category.objects.all()  
@@ -69,11 +82,11 @@ def update_category(request, uid):
 
 def delete_category(request, uid):
     category = get_object_or_404(Category, uid=uid)
-    if request.method == 'POST':
-        category.delete()
-        return redirect('category_management')
     
-    return render(request, 'dashboard/delete_category.html', {'category': category})
+    category.delete()
+    return redirect('category_management')
+    
+    
 
 def add_product(request):
     if request.method == 'POST':
@@ -147,7 +160,8 @@ def update_product_variant(request, uid):
 
 def banner_coupon_view(request):
     coupons = Coupons.objects.all()
-    return render(request,'dashboard/banner_coupon.html' ,{'coupons':coupons })
+    banners = Banner.objects.all()
+    return render(request,'dashboard/banner_coupon.html' ,{'coupons':coupons ,'banners':banners })
 
 def add_coupon(request):
     if request.method == 'POST':
@@ -176,6 +190,34 @@ def update_coupon(request, uid):
 def delete_coupon(request, uid):
     coupon = get_object_or_404(Coupons, uid=uid)
     coupon.delete()
+    return redirect('banner_coupon')
+
+def add_banner(request):
+    if request.method == 'POST':
+        banner_form = BannerForms(request.POST,request.FILES)
+        if banner_form.is_valid():
+            banner_form.save()
+            return redirect('banner_coupon')  # Redirect to the variant management page
+    else:
+        banner_form = BannerForms()
+
+    return render(request, 'dashboard/add_banner.html', {'banner_form': banner_form}) 
+
+def update_banner(request, uid):
+    banner = get_object_or_404(Banner, uid=uid)
+    if request.method == 'POST':
+        banner_form = BannerForms(request.POST, instance=banner)
+        if banner_form.is_valid():
+            banner_form.save()
+            return redirect('banner_coupon')
+    else:
+        banner_form = BannerForms(instance=banner)
+    
+    return render(request, 'dashboard/update_banner.html', {'banner_form': banner_form, 'banner': banner})
+
+def delete_banner(request, uid):
+    banner = get_object_or_404(Banner, uid=uid)
+    banner.delete()
     return redirect('banner_coupon')
 
 

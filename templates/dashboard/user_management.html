@@ -1,4 +1,4 @@
-{% extends "dashboard/dashboard.html" %} {%block content%}
+{% extends "dashboard/dashboard.html" %} {% block content %}
 <div class="category-form-container">
   <h1>Category List</h1>
   <table class="category-table">
@@ -6,21 +6,38 @@
       <tr>
         <th>First Name</th>
         <th>Last Name</th>
-        <th>email</th>
-        <th>phone</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
       {% for user in users %}
       <tr>
         <td>{{ user.first_name }}</td>
-        <td>{{user.last_name}}</td>
-        <td>{{user.email}}</td>
-        <td>{{user.phone}}</td>
+        <td>{{ user.last_name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone }}</td>
+        <td>
+          {% if user.is_active %}
+          <a
+            href="{% url 'block_user' user.uid %}"
+            class="btn btn-danger"
+            onclick="return confirm('Are you sure you want to block this user?');"
+            >Block</a
+          >
+          {% else %}
+          <a
+            href="{% url 'unblock_user' user.uid %}"
+            class="btn btn-success"
+            onclick="return confirm('Are you sure you want to unblock this user?');"
+            >Unblock</a
+          >
+          {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
-
-{%endblock%}
+{% endblock %}

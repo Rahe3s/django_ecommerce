@@ -180,158 +180,91 @@ def add_to_cart(request, uid):
 
 def update_cart(request):
     if request.method == 'POST':
-        try:
-            item_id = request.POST.get('item_id')
-            new_quantity = int(request.POST.get('new_quantity'))
+        item_id = request.POST.get('item_id')
+        new_quantity = request.POST.get('new_quantity')
 
-            if request.user.is_authenticated:
-                try:
-                    # Debug: Log the received item_id and user
-                    print(f"Updating cart item - User: {request.user}, Item ID: {item_id}")
+        if not item_id or not new_quantity.isdigit():
+            return JsonResponse({'success': False, 'message': 'Invalid data provided.'}, status=400)
 
-                    # Fetch cart and item
-                    cart, created = Cart.objects.get_or_create(user=request.user)
-                    cart_item = CartItem.objects.get(cart=cart, id=item_id)  # Only get, don't create
+        new_quantity = int(new_quantity)
 
-                    # Update quantity
-                    cart_item.quantity = new_quantity
-                    cart_item.save()
+        if request.user.is_authenticated:
+            try:
+                # Get the user's cart and the specific cart item
+                cart = Cart.objects.get(user=request.user)
+                cart_item = CartItem.objects.get(cart=cart, id=item_id)
 
-                    # Calculate updated item total
-                    item_total = Decimal(cart_item.quantity) * Decimal(cart_item.product_variant.product.price)
+                # Update the quantity
+                cart_item.quantity = new_quantity
+                cart_item.save()
 
-                    # Calculate updated total price for the entire cart
-                    cart_total = cart.items.aggregate(
-                        total=Sum(F('quantity') * F('product_variant__product__price'))
-                    )['total'] or 0
+                # Calculate totals
+                item_total = Decimal(cart_item.quantity) * Decimal(cart_item.product_variant.product.price)
+                cart_total = cart.items.aggregate(
+                    total=Sum(F('quantity') * F('product_variant__product__price'))
+                )['total'] or 0
 
-                    messages.success(request, "Cart item updated successfully.")
+                return JsonResponse({
+                    'success': True,
+                    'item_total': float(item_total),
+                    'cart_total': float(cart_total),
+                })
+
+            except CartItem.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'Item not found in cart.'}, status=404)
+
+        else:
+            # Handle session-based cart
+            cart = request.session.get('cart', [])
+            for item in cart:
+                if str(item['id']) == item_id:
+                    item['quantity'] = new_quantity
+                    request.session.modified = True
+
+                    item_total = item['quantity'] * item['price']
+                    cart_total = sum(i['quantity'] * i['price'] for i in cart)
+
                     return JsonResponse({
                         'success': True,
-                        'item_total': float(item_total),
-                        'cart_total': float(cart_total),
+                        'item_total': item_total,
+                        'cart_total': cart_total,
                     })
 
-                except CartItem.DoesNotExist:
-                    messages.error(request, "Cart item not found.")
-                    return JsonResponse({'success': False, 'message': 'Cart item not found.'})
-                except Exception as e:
-                    messages.error(request, f"An error occurred: {e}")
-                    return JsonResponse({'success': False, 'message': str(e)})
+            return JsonResponse({'success': False, 'message': 'Item not found in session cart.'}, status=404)
 
-            else:
-                try:
-                    # Guest user logic
-                    cart = request.session.get('cart', [])
-                    cart_item = None
-
-                    # Find the item in the session cart
-                    for item in cart:
-                        if item['id'] == item_id:
-                            item['quantity'] = new_quantity
-                            cart_item = item
-                            break
-
-                    # Check if the item was found and update session
-                    if cart_item:
-                        request.session['cart'] = cart
-                        request.session.modified = True
-
-                        # Calculate item total and cart total
-                        item_total = cart_item['quantity'] * cart_item['price']
-                        cart_total = sum(item['quantity'] * item['price'] for item in cart)
-
-                        messages.success(request, "Session cart item updated successfully.")
-                        return JsonResponse({
-                            'success': True,
-                            'cart_total': cart_total,
-                            'item_total': item_total
-                        })
-                    else:
-                        messages.error(request, "Cart item not found in session cart.")
-                        return JsonResponse({'success': False, 'message': 'Cart item not found in session cart.'})
-                except Exception as e:
-                    messages.error(request, f"An error occurred while updating the session cart: {e}")
-                    return JsonResponse({'success': False, 'message': str(e)})
-
-        except ValueError:
-            messages.error(request, "Invalid quantity provided.")
-            return JsonResponse({'success': False, 'message': 'Invalid quantity.'})
-        except Exception as e:
-            messages.error(request, f"An unexpected error occurred: {e}")
-            return JsonResponse({'success': False, 'message': str(e)})
-        
-        
-
-    messages.error(request, "Invalid request method.")
-    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
-
-
-
-
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
 
 
 def remove_from_cart(request):
     if request.method == 'POST':
-        try:
-            item_id = request.POST.get('item_id')
+        item_id = request.POST.get('item_id')
 
-            if request.user.is_authenticated:
-                try:
-                    cart, created = Cart.objects.get_or_create(user=request.user)
-                    cart_item = CartItem.objects.get(cart=cart, id=item_id)
+        if request.user.is_authenticated:
+            try:
+                cart = Cart.objects.get(user=request.user)
+                cart_item = CartItem.objects.get(cart=cart, id=item_id)
+                cart_item.delete()
 
-                    # Delete the cart item
-                    cart_item.delete()
+                cart_total = cart.items.aggregate(
+                    total=Sum(F('quantity') * F('product_variant__product__price'))
+                )['total'] or 0
 
-                    # Calculate updated total price for the entire cart
-                    cart_total = cart.items.aggregate(
-                        total=Sum(F('quantity') * F('product_variant__product__price'))
-                    )['total'] or 0
+                return JsonResponse({'success': True, 'cart_total': float(cart_total)})
 
-                    messages.success(request, "Item removed from your cart.")
-                    return JsonResponse({
-                        'success': True,
-                        'cart_total': float(cart_total),
-                    })
+            except CartItem.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'Item not found in cart.'}, status=404)
 
-                except CartItem.DoesNotExist:
-                    messages.error(request, "Item not found in your cart.")
-                    return JsonResponse({'success': False, 'message': 'Item not found in cart.'})
+        else:
+            cart = request.session.get('cart', [])
+            updated_cart = [item for item in cart if str(item['id']) != item_id]
 
-                except Exception as e:
-                    messages.error(request, f"An error occurred: {e}")
-                    return JsonResponse({'success': False, 'message': str(e)})
+            if len(updated_cart) != len(cart):
+                request.session['cart'] = updated_cart
+                request.session.modified = True
 
-            else:
-                try:
-                    # For guest user: remove item from session cart
-                    cart = request.session.get('cart', [])
-                    updated_cart = [item for item in cart if item['id'] != item_id]
+                cart_total = sum(item['quantity'] * item['price'] for item in updated_cart)
+                return JsonResponse({'success': True, 'cart_total': cart_total})
 
-                    if len(cart) != len(updated_cart):
-                        request.session['cart'] = updated_cart
-                        request.session.modified = True
+            return JsonResponse({'success': False, 'message': 'Item not found in session cart.'}, status=404)
 
-                        # Calculate updated cart total
-                        cart_total = sum(item['quantity'] * item['price'] for item in updated_cart)
-
-                        messages.success(request, "Item removed from your session cart.")
-                        return JsonResponse({
-                            'success': True,
-                            'cart_total': cart_total
-                        })
-                    else:
-                        messages.error(request, "Item not found in session cart.")
-                        return JsonResponse({'success': False, 'message': 'Item not found in session cart.'})
-
-                except Exception as e:
-                    messages.error(request, f"An error occurred while removing the item: {e}")
-                    return JsonResponse({'success': False, 'message': str(e)})
-
-        except Exception as e:
-            messages.error(request, f"An unexpected error occurred: {e}")
-            return JsonResponse({'success': False, 'message': str(e)})
-
-    messages.error(request, "Invalid request method.")
-    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
