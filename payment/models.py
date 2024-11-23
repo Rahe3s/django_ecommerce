@@ -24,7 +24,7 @@ class Order(models.Model):
                                                              ('paid', 'Paid'), 
                                                              ('failed', 'Failed'),
                                                              ('refunded', 'refunded')],
-                                      default='pending')  # Status of the payment
+                                                                default='pending')  # Status of the payment
     
     order_status = models.CharField(max_length=20, choices=[('processing', 'Processing'), 
                                                             ('shipped', 'Shipped'),
@@ -32,13 +32,13 @@ class Order(models.Model):
                                                             ('cancelled', 'Cancelled'),
                                                             ('returned', 'Returned'),
                                                             ('return_requested','return_requested')],
-                                    default='processing')  # Order status
+                                                            default='processing')  # Order status
     return_status = models.CharField(max_length=20, choices=[('no_request', 'No Request'),
                                                             ('requested', 'Requested'),
                                                             ('approved', 'Approved'),
                                                              ('rejected', 'Rejected'),
                                                              ('completed', 'Completed'), ],
-                                    default='no_request')  # Order status
+                                                                default='no_request')  # Order status
     
     created_at = models.DateTimeField(auto_now_add=True)  # Time of order creation
     updated_at = models.DateTimeField(auto_now=True)  # Time of last order update

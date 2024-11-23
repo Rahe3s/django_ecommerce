@@ -28,6 +28,8 @@ class products(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     price = models.IntegerField()
     product_description = models.TextField()
+    created_date = models.DateTimeField(auto_now_add=True)
+
 
     
     def save(self, *args, **kwargs):

@@ -71,7 +71,7 @@ def add_category(request):
 def update_category(request, uid):
     category = get_object_or_404(Category, uid=uid)
     if request.method == 'POST':
-        form = CategoryForm(request.POST, instance=category)
+        form = CategoryForm(request.POST, request.FILES, instance=category)
         if form.is_valid():
             form.save()
             return redirect('category_management')

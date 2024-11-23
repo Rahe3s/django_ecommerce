@@ -1,7 +1,7 @@
 {% extends "dashboard/dashboard.html" %} {% block content %}
 <div class="form-container">
   <h1>Update Category</h1>
-  <form method="POST">
+  <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <div>{{ form.as_p }}</div>
     <button type="submit">Update Category</button>
