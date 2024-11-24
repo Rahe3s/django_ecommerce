@@ -1,4 +1,5 @@
 {% extends 'base.html' %} {% block body %}
+{% include 'alert.html' %}
 
 <!-- Start Product Detail Section -->
 <div class="product-detail-container">
@@ -44,6 +45,8 @@
         <p>{{ product.product_description }}</p>
         <p>Product UID: {{ product.uid }}</p>
 
+        <!-- Check Stock -->
+        {% if is_in_stock %}
         <!-- Form with product_variant_id -->
         <form action="/cart/add_to_cart/{{ product.uid }}" method="post">
           {% csrf_token %}
@@ -89,6 +92,12 @@
             <button type="submit" class="btn btn-primary">Add to Cart</button>
           </div>
         </form>
+        {% else %}
+        <!-- Out of Stock Message -->
+        <div class="alert alert-danger mt-3" role="alert">
+          This product is currently out of stock.
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
