@@ -11,7 +11,8 @@ def home(request):
 
 
 def contact(request):
-    return render(request, 'home/contact.html')
+    banner = Banner.objects.get(position = 'homepage')
+    return render(request, 'home/contact.html',{'banner':banner })
 
 
 

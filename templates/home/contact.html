@@ -7,13 +7,19 @@
                     <div class="col-lg-5">
                         <div class="intro-excerpt">
                             <h1>Contact</h1>
-                            <p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+                            <p class="mb-4">Your satisfaction is our priority. Get in touch with us to experience unparalleled support and personalized service.</p>
                             <p><a href="" class="btn btn-secondary me-2">Shop Now</a><a href="#" class="btn btn-white-outline">Explore</a></p>
                         </div>
                     </div>
                     <div class="col-lg-7">
                         <div class="hero-img-wrap">
-                            <img src="images/couch.png" class="img-fluid">
+                          {% if banner.image %}
+                          <img
+                            src="{{ banner.image.url }}"
+                            class="img-fluid"
+                            alt="Banner Image"
+                          />
+                          {% endif %}
                         </div>
                     </div>
                 </div>
@@ -42,7 +48,7 @@
                   </svg>
                 </div> <!-- /.icon -->
                 <div class="service-contents">
-                  <p>43 Raymouth Rd. Baltemoer, London 3910</p>
+                  <p>Magnum Mall, payyanur, Kannur</p>
                 </div> <!-- /.service-contents-->
               </div> <!-- /.service -->
             </div>
@@ -55,7 +61,7 @@
                   </svg>
                 </div> <!-- /.icon -->
                 <div class="service-contents">
-                  <p>info@yourdomain.com</p>
+                  <p>hype@gmail.com</p>
                 </div> <!-- /.service-contents-->
               </div> <!-- /.service -->
             </div>
@@ -68,7 +74,7 @@
                   </svg>
                 </div> <!-- /.icon -->
                 <div class="service-contents">
-                  <p>+1 294 3925 3939</p>
+                  <p>+919876543210</p>
                 </div> <!-- /.service-contents-->
               </div> <!-- /.service -->
             </div>
