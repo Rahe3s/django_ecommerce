@@ -1,25 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Stripe Payment</title>
+    <title>Secure Stripe Payment</title>
     {% load static %}
     <script src="https://js.stripe.com/v3/"></script>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+        }
+        .payment-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #343a40;
+        }
+        #card-element {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        #submit {
+            width: 100%;
+        }
+        #error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .order-summary {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        .order-summary h2 {
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+        }
+        .order-summary .total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #343a40;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1>Stripe Payment</h1>
-        <form id="payment-form">
-            <div id="card-element"><!--Stripe.js injects the Card Element--></div>
-            <button id="submit" class="btn btn-primary mt-3">Pay</button>
-            <div id="error-message" role="alert"></div>
-        </form>
+    <div class="container">
+        <div class="payment-container">
+            <h1>Secure Stripe Payment</h1>
+            <p class="text-center text-muted">Complete your payment quickly and securely using Stripe.</p>
+            
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                <p class="mb-1">Order Total:</p>
+                <p class="total">₹{{ order_total }}</p>
+            </div>
+
+            <!-- Payment Form -->
+            <form id="payment-form">
+                <label for="card-element" class="form-label">Card Details</label>
+                <div id="card-element"><!--Stripe.js injects the Card Element--></div>
+                <button id="submit" class="btn btn-primary btn-lg mt-4">Pay ₹{{ order_total }}</button>
+                <div id="error-message" role="alert"></div>
+            </form>
+        </div>
     </div>
 
     <script>
     var stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
     var elements = stripe.elements();
-    var card = elements.create("card");
+    var card = elements.create("card", {
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+            }
+        }
+    });
     card.mount("#card-element");
 
     card.on('change', function(event) {
@@ -47,7 +122,6 @@
                 errorElement.textContent = result.error.message;
             } else {
                 if (result.paymentIntent.status === 'succeeded') {
-                    // Redirect to payment success handler
                     fetch("{% url 'payment_success' %}", {
                         method: 'POST',
                         headers: {
@@ -59,7 +133,7 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.status === 'success') {
-                            window.location.href = "/order/success/" + data.order_uid;  // Redirect to success page with order UID
+                            window.location.href = "/order/success/" + data.order_uid;
                         } else {
                             var errorElement = document.getElementById('error-message');
                             errorElement.textContent = 'Error completing the order: ' + data.message;
