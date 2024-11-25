@@ -16,9 +16,14 @@
   </div>
 </div>
 <!-- End Hero Section -->
-
 <div class="untree_co-section before-footer-section">
   <div class="container">
+    {% if is_cart_empty %}
+      <div class="row mb-5 text-center">
+        <h2>Your cart is empty!</h2>
+        <a href="{% url 'shop' %}" class="btn btn-outline-black btn-sm mt-3">Keep Shopping</a>
+      </div>
+    {% else %}
     <div class="row mb-5 item_display">
       <form class="col-md-12 " method="post">
         {% csrf_token %}
@@ -133,7 +138,10 @@
       </div>
     </form>
   </div>
+    {% endif %}
+  </div>
 </div>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{% static 'js/cart.js' %}"></script>      

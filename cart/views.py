@@ -6,10 +6,10 @@ from django.http import JsonResponse
 from django.db.models import Sum, F
 from decimal import Decimal
 
-
 def cart(request):
     cart_items = []
     total_price = 0
+    is_cart_empty = True  # Flag to check if the cart is empty
 
     try:
         if request.user.is_authenticated:
@@ -20,9 +20,7 @@ def cart(request):
                 
                 for item in session_cart:
                     try:
-                        # Fetch the product variant based on the session item data
                         product_variant = ProductVariant.objects.filter(uid=item['product_variant_id']).first()
-                        
                         if product_variant:
                             cart_item, created = CartItem.objects.get_or_create(
                                 cart=user_cart,
@@ -35,18 +33,15 @@ def cart(request):
                     except Exception as e:
                         messages.error(request, f"Error adding item {item['product_variant_id']} to your cart: {e}")
                 
-                # Clear the session cart after merging
                 del request.session['cart']
 
-            # Fetch user's cart items from the database
             user_cart_items = CartItem.objects.filter(cart__user=request.user)
-            
             for item in user_cart_items:
                 try:
                     product_variant = item.product_variant
                     product = product_variant.product
-                    product_images = product.product_images.all()  # Adjust based on image fetching logic
-                    
+                    product_images = product.product_images.all()
+
                     cart_items.append({
                         'id': item.id,
                         'variant': product_variant,
@@ -59,16 +54,14 @@ def cart(request):
                     messages.error(request, f"Error fetching item {item.id}: {e}")
 
         else:
-            # Handle guest cart
             session_cart = request.session.get('cart', [])
-            
             for item in session_cart:
                 try:
                     product_variant = ProductVariant.objects.filter(uid=item['product_variant_id']).first()
                     if product_variant:
                         product = product_variant.product
-                        product_images = product.product_images.all()  # Adjust based on image fetching logic
-                        
+                        product_images = product.product_images.all()
+
                         cart_items.append({
                             'id': item['id'],
                             'variant': product_variant,
@@ -80,13 +73,15 @@ def cart(request):
                 except Exception as e:
                     messages.error(request, f"Error fetching session cart item {item['product_variant_id']}: {e}")
 
-        # Calculate the grand total price
+        # Check if the cart is empty
+        is_cart_empty = len(cart_items) == 0
         total_price = sum(item['total_price'] for item in cart_items)
 
     except Exception as e:
         messages.error(request, f"An unexpected error occurred: {e}")
 
-    return render(request, 'cart/cart.html', {'cart_items': cart_items, 'total_price': total_price})
+    return render(request, 'cart/cart.html', {'cart_items': cart_items, 'total_price': total_price, 'is_cart_empty': is_cart_empty})
+
   
 
 def add_to_cart(request, uid):

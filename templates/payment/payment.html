@@ -27,7 +27,7 @@
             border-radius: 4px;
             margin-top: 10px;
         }
-        #submit {
+        #submit, #cancel {
             width: 100%;
         }
         #error-message {
@@ -73,6 +73,8 @@
                 <button id="submit" class="btn btn-primary btn-lg mt-4">Pay ₹{{ order_total }}</button>
                 <div id="error-message" role="alert"></div>
             </form>
+            <!-- Cancel Button -->
+            <a href="{% url 'payment_cancel' %}" id="cancel" class="btn btn-secondary btn-lg mt-4">Cancel</a>
         </div>
     </div>
 

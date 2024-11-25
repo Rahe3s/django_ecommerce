@@ -86,6 +86,16 @@
                 <a href="#" class="sidebar-toggler flex-shrink-0">
                     <i class="fa fa-bars"></i>
                 </a>
+            
+                <!-- Logout Button -->
+                <div class="ms-auto">
+                    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa fa-sign-out-alt me-2"></i>Logout
+                        </button>
+                    </form>
+                </div>
             </nav>
             <!-- Navbar End -->
 

@@ -6,19 +6,25 @@
     <form method="post" autocomplete="off" action="{% url 'login_page' %}">
       {% csrf_token %}
       <div class="form-group mb-4">
-        {{ loginform.phone }} {% if loginform.phone.errors %}
+        {{ loginform.phone }} 
+        {% if loginform.phone.errors %}
         <div class="alert alert-danger">{{ loginform.phone.errors }}</div>
         {% endif %}
       </div>
 
       <div class="form-group mb-5">
-        {{ loginform.password }} {% if loginform.password.errors %}
+        {{ loginform.password }} 
+        {% if loginform.password.errors %}
         <div class="alert alert-danger">{{ loginform.password.errors }}</div>
         {% endif %}
       </div>
 
-      <button type="submit" class="btn btn-primary mb-4">login</button>
-      <p class="text-center"><a href="{% url 'registration' %}">New user?!! Register</a></p>
+      <button type="submit" class="btn btn-primary mb-4">Login</button>
+      <p class="text-center">
+        <a href="{% url 'registration' %}">New user? Register</a>
+        <br>
+        <a href="{% url 'forget_password' %}">Forgot password?</a>
+      </p>
     </form>
   </div>
 </body>

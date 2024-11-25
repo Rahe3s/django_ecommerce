@@ -1,0 +1,45 @@
+{% include 'head.html' %} {% load static %} {%include 'alert.html'%}
+<body>
+  <!-- Start Header/Navigation -->
+  <nav
+    class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark"
+    aria-label="Furni navigation bar"
+  >
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">Hype<span>.</span></a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarsFurni"
+        aria-controls="navbarsFurni"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Start Cancel Message -->
+  <div class="container mt-5">
+    <div class="text-center">
+      <h1 class="display-4 text-danger">Payment Cancelled</h1>
+      <p class="lead">
+        Your payment has been cancelled. Please try again or choose an alternate
+        payment method.
+      </p>
+      <hr />
+      <a href="{% url 'home' %}" class="btn btn-primary mt-3"
+        >Continue Shopping</a
+      >
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer mt-5 py-3 bg-dark text-white text-center">
+    <div class="container">
+      <span>© {{ year }} Hype. All rights reserved.</span>
+    </div>
+  </footer>
+</body>

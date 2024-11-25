@@ -9,6 +9,7 @@ from twilio.rest import Client
 from django.conf import settings
 from datetime import datetime
 from django.contrib.auth import get_user_model
+from django.utils.timezone import now
 
 
 
@@ -154,7 +155,76 @@ def logout_page(request):
         return redirect('login_page')
 
 
-    
+def forget_password(request):
+    if request.method == 'POST':
+        phone = request.POST.get('phone')
+
+        if User_Details.objects.filter(phone=phone).exists():
+            # Generate OTP
+            otp = str(random.randint(100000, 999999))
+            request.session['reset_phone'] = phone
+            request.session['reset_otp'] = otp
+            request.session['reset_otp_created_at'] = now().isoformat()
+
+            try:
+                # Send OTP via SMS
+                client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+                message = client.messages.create(
+                    body=f'Your OTP code is {otp}',
+                    from_=settings.TWILIO_PHONE_NUMBER,
+                    to=phone
+                )
+
+                messages.success(request, "OTP has been sent to your phone.")
+                return redirect('reset_password')
+            except Exception as e:
+                messages.error(request, "Failed to send OTP. Please try again later.")
+        else:
+            messages.error(request, "Phone number not found.")
+
+    return render(request, 'accounts/reset_password_request.html')
+
+
+def reset_password(request):
+    if request.method == 'POST':
+        input_otp = request.POST.get('otp')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Retrieve session data
+        otp = request.session.get('reset_otp')
+        phone = request.session.get('reset_phone')
+        otp_created_at = datetime.fromisoformat(request.session.get('reset_otp_created_at'))
+
+        # Validate OTP
+        if otp and otp_created_at:
+            time_diff = now() - otp_created_at
+
+            if time_diff.total_seconds() <= 120:  # OTP expires after 2 minutes
+                if input_otp == otp:
+                    if new_password == confirm_password:
+                        # Update user password
+                        user = User_Details.objects.get(phone=phone)
+                        user.set_password(new_password)
+                        user.save()
+
+                        # Clear session
+                        del request.session['reset_otp']
+                        del request.session['reset_phone']
+                        del request.session['reset_otp_created_at']
+
+                        messages.success(request, "Password reset successfully. You can now log in.")
+                        return redirect('login_page')
+                    else:
+                        messages.error(request, "Passwords do not match.")
+                else:
+                    messages.error(request, "Invalid OTP.")
+            else:
+                messages.error(request, "OTP has expired.")
+        else:
+            messages.error(request, "Invalid session data. Please try again.")
+
+    return render(request, 'accounts/reset_password.html')
 
 
 

@@ -206,3 +206,9 @@ def success_page(request, uid):
     except Order.DoesNotExist:
         messages.error(request, "Order not found.")
         return redirect('home')
+
+@login_required
+def payment_cancel(request):
+    messages.info(request, 'Your payment has been cancelled.')
+    return render(request, 'payment/cancel.html')
+
