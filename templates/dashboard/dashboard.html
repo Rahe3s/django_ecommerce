@@ -89,7 +89,7 @@
             
                 <!-- Logout Button -->
                 <div class="ms-auto">
-                    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+                    <form method="POST" action="{% url 'logout_page' %}" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">
                             <i class="fa fa-sign-out-alt me-2"></i>Logout

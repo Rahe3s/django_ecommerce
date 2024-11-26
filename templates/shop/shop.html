@@ -1,14 +1,40 @@
-{% extends "base.html" %} {%block body%}{% include "alert.html" %}
+{% extends "base.html" %}
+{% block body %} 
+{% load static %} 
+{% include "alert.html" %}
 <!-- Start Hero Section -->
 <div class="hero">
   <div class="container">
-    <div class="row justify-content-between">
+    <div class="row justify-content-between align-items-center">
       <div class="col-lg-5">
         <div class="intro-excerpt">
           <h1>Shop</h1>
         </div>
       </div>
-      <div class="col-lg-7"></div>
+      <div class="col-lg-7">
+        <!-- Search and Filter Bar -->
+        <div class="row">
+          <div class="col-md-8 mb-2">
+            <input
+              type="text"
+              id="searchInput"
+              class="form-control"
+              placeholder="Search for products..."
+            />
+          </div>
+          <div class="col-md-4 mb-2">
+            <select id="categoryFilter" class="form-select">
+              <option value="">All Categories</option>
+              <!-- Populate categories dynamically -->
+              {% for category in categories %}
+              <option value="{{ category.uid }}">
+                {{ category.category_name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -16,21 +42,19 @@
 
 <div class="untree_co-section product-section before-footer-section">
   <div class="container">
-    <div class="row">
-      <!-- Loop through each product in the product list -->
+    <!-- Product Listing -->
+    <div class="row" id="productContainer">
       {% for product in products_list %}
       <div class="col-12 col-md-4 col-lg-3 mb-5">
         <a
           class="product-item"
           href="{% url 'product_catalogue' product.uid %}"
         >
-          <!-- Display the first image if available -->
           <img
             src="{% if product.product_images.all %}{{ product.product_images.first.image.url }}{% endif %}"
             class="img-fluid product-thumbnail"
             alt="{{ product.product_name }}"
           />
-
           <h3 class="product-title">{{ product.product_name }}</h3>
           <strong class="product-price">${{ product.price }}</strong>
         </a>
@@ -40,4 +64,6 @@
   </div>
 </div>
 
-{%endblock%}
+<script src="{% static 'js/shop.js' %}"></script>
+
+{% endblock %}
