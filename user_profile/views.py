@@ -4,6 +4,8 @@ from payment.models import Order,Wallet
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db import transaction
+from .forms import EditProfileForm
+
 
 def user_profile_view(request):
     user = request.user
@@ -85,3 +87,21 @@ def return_order(request, uid):
 def order_detail(request,uid):
     pass
 
+
+
+
+def edit_profile(request):
+    user = request.user  # Assuming the user is logged in
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('your_profile')
+    else:
+        print(user.first_name, user.last_name, user.phone, user.email)
+
+        form = EditProfileForm(instance=user)
+        
+      # Prepopulate the form with user data
+    
+    return render(request, 'user_profile/edit_profile.html', {'form': form, 'user': user})

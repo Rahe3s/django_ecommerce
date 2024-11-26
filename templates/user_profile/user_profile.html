@@ -25,7 +25,6 @@
     <link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet" />
     <link href="{% static 'css/style.css' %}" rel="stylesheet" />
     <link href="{% static 'css/user_profile.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/product_catalogue.css' %}" rel="stylesheet" />
    
     <title>
       Furni Free Bootstrap 5 Template for Furniture and Interior Design Websites
@@ -64,15 +63,15 @@
         {% block profile_content %}
         <!-- Main Content -->
         
-            <div class="p-3 " >
-                <h1>Welcome, {{ user.first_name }}!</h1>
-                <br>
-                <p><strong>First Name: </strong>{{user.first_name}}</p>
-                <p><strong>Last Name: </strong>{{user.last_name}}</p>
-                <p><strong>Phone: </strong> {{ user.phone }}</p>
-                <p><strong>Email: </strong> {{ user.email }}</p>
-                
-            </div>
+        <div class="p-3">
+            <h1>Welcome, {{ user.first_name }}!</h1>
+            <br />
+            <p><strong>First Name: </strong>{{ user.first_name }}</p>
+            <p><strong>Last Name: </strong>{{ user.last_name }}</p>
+            <p><strong>Phone: </strong>{{ user.phone }}</p>
+            <p><strong>Email: </strong>{{ user.email }}</p>
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary mt-3">Edit Profile</a>
+        </div>
         
         {%endblock%}
             </div>

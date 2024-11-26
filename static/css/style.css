@@ -709,7 +709,15 @@ textarea {
     height: 50px;
     border-radius: 50%;
     background: rgba(59, 93, 80, 0.2); }
+  
 
-
+.search-filter-box {
+  border: 1px solid #ccc; /* Thin border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 18px 18px 18px 18px; /* Padding inside the box */
+  display: flex;
+  gap: 8px; /* Spacing between elements */
+  /* Light background for better visibility */
+}
 
     
