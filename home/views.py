@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from .models import Banner
 from product.models import Category,products
+from django.views.decorators.cache import cache_control
+
+
 
 def home(request):
     banner = Banner.objects.get(position='homepage')

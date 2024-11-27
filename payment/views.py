@@ -86,7 +86,7 @@ def place_order(request):
                 return JsonResponse({'status': 'success', 'order_id': str(order.uid)})
 
             # Handle other payment methods (e.g., Stripe)
-            else:
+            elif payment_method == 'credit_card':
                 # Save order data in session for payment processing
                 request.session['order_data'] = {
                     'address_id': address_id,
@@ -99,6 +99,10 @@ def place_order(request):
 
                 # Redirect to the payment page (e.g., Stripe)
                 return JsonResponse({'status': 'redirect', 'url': reverse('payment_page')})
+            else:
+                messages.warning(request, f'choose your payment: ')
+                return redirect("checkout")
+                
 
         except Exception as e:
             # Log unexpected errors

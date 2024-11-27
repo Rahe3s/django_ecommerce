@@ -40,7 +40,7 @@
         <!-- Sidebar -->
         <div class="col-md-3 col-lg-2  text-white sidebar">
             <nav class="navbar navbar-dark">
-                <h3 class="text-light"><i class="fa fa-user-edit mx-2"></i>User</h3>
+                <h3 class="text-light"><i class="fa fa-user-edit mx-2"></i>Your Account</h3>
                 <div class="navbar-nav w-100">
                     <a href="{% url 'your_profile' %}" class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_profile' %}active{% endif %}">
                         <i class="fa fa-tachometer-alt me-2"></i>Your Details
@@ -51,7 +51,7 @@
                     <a href="{% url 'your_addresses' %}" class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_addresses' %}active{% endif %}">
                         <i class="fa fa-keyboard me-2"></i>Your Addresses
                     </a>
-                    <a href="{% url 'your_wallet' %}" class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}">
+                    <a href="{% url 'your_wallet' %}" class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_wallet' %}active{% endif %}">
                         <i class="fa fa-table me-2"></i>Your Wallet
                     </a>
                     

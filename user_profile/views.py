@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.db import transaction
 from .forms import EditProfileForm
+from orders.forms import AddressForm
 
 
 def user_profile_view(request):
@@ -105,3 +106,32 @@ def edit_profile(request):
       # Prepopulate the form with user data
     
     return render(request, 'user_profile/edit_profile.html', {'form': form, 'user': user})
+
+def edit_address(request, uid):
+    address = get_object_or_404(Address, uid=uid, user=request.user)  # Ensure the address belongs to the user
+    if request.method == 'POST':
+        form = AddressForm(request.POST, instance=address)
+        if form.is_valid():
+            form.save()
+            return redirect('your_addresses')  # Redirect back to the addresses page
+    else:
+        form = AddressForm(instance=address)
+    return render(request, 'user_profile/edit_address.html', {'form': form})
+
+def delete_address(request, uid):
+    try:
+        # Get the address object or return 404 if not found
+        address = get_object_or_404(Address, uid=uid, user=request.user)
+
+        # Delete the address
+        address.delete()
+
+        # Add a success message
+        messages.success(request, "Address deleted successfully!")
+
+    except Exception as e:
+        # If there was an error, add an error message
+        messages.error(request, f"Error deleting address: {str(e)}")
+
+    # Redirect back to the addresses list page
+    return redirect('your_addresses')

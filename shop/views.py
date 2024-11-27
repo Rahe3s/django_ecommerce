@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from product.models import Category
 
 def shop(request):
-    products_list = products.objects.prefetch_related('product_images').all()
+    products_list = products.objects.prefetch_related('product_images').all().order_by('-created_date')
     categories = Category.objects.all()
     return render(request, 'shop/shop.html', {'products_list': products_list, 'categories': categories})
 

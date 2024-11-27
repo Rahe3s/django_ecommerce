@@ -10,8 +10,7 @@ from django.conf import settings
 from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.utils.timezone import now
-
-
+from django.views.decorators.cache import cache_control
 
 
 def registration(request):
@@ -104,6 +103,7 @@ def otp_verification(request):
 
     return render(request, 'accounts/otp_verification.html')
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login_page(request):
     try:
         if request.user.is_authenticated:
@@ -143,6 +143,7 @@ def login_page(request):
         messages.error(request, f"An unexpected error occurred: {str(e)}")
         return render(request, 'accounts/login.html', {'loginform': LoginForms()})
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def logout_page(request):
     try:
         logout(request)
