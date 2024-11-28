@@ -45,7 +45,7 @@ def registration(request):
                 message = client.messages.create(
                     body=f'Your OTP code is {otp}',
                     from_=settings.TWILIO_PHONE_NUMBER,
-                    to=phone
+                    to=f'+91{phone}'
                 )
 
                 messages.success(request, 'Verify! An OTP has been sent to your phone.')
@@ -101,7 +101,7 @@ def otp_verification(request):
     except Exception as e:
         messages.error(request, f"An unexpected error occurred:")
 
-    return render(request, 'accounts/otp_verification.html')
+    return render(request, 'accounts/otp.html')
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login_page(request):
@@ -173,7 +173,7 @@ def forget_password(request):
                 message = client.messages.create(
                     body=f'Your OTP code is {otp}',
                     from_=settings.TWILIO_PHONE_NUMBER,
-                    to=phone
+                    to=f'+91{phone}'
                 )
 
                 messages.success(request, "OTP has been sent to your phone.")
