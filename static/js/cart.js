@@ -13,15 +13,10 @@ $(document).ready(function() {
                 'new_quantity': newQuantity
             },
             success: function(response) {
-                console.log('success');
                 if (response.success) {
-                    
-                    console.log('Quantity updated successfully.');
                     $('.cart-total').text(`$${response.cart_total.toFixed(2)}`);
                     $(`#product-total-${itemId}`).text(`$${response.item_total.toFixed(2)}`);
-                    console.log("Updating product total:", `#product-total-${itemId}`, `$${response.item_total.toFixed(2)}`);
-
-                    
+   
                 } else {
                     alert(response.message);
                 }

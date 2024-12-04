@@ -4,9 +4,6 @@ $(document).ready(function() {
 
         var couponUid = $('#coupon').val();
         var cart_total = parseFloat($('#cart-total').data('cart-total'));
-        console.log("Selected cart-total:", cart_total);
-         // Get selected coupon UID
-        console.log("Selected Coupon UID:", couponUid); // Log the UID for debugging
 
         // Check if a coupon is selected
         if (!couponUid) {
@@ -23,8 +20,6 @@ $(document).ready(function() {
                 'cart_total': cart_total // Pass the coupon UID here
             },
             success: function(response) {
-                console.log("Server response:", response); // Log the response for debugging
-
                 if (response.success) {
                     // Update discount and total fields based on response
                     $('#discount').text(`${response.discount.toFixed(2)}`);
@@ -88,8 +83,7 @@ $(document).ready(function () {
                 'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
             },
             success: function(response) {
-                if (response.status === 'success') {
-                    
+                if (response.status === 'success') {                   
                     window.location.href = '/order/success/'+response.order_id; ;  // Redirect to success page
                 } else if (response.status === 'redirect') {
                     window.location.href = response.url;  // Redirect to payment page
@@ -98,7 +92,6 @@ $(document).ready(function () {
                 }
             },
             error: function(xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);  // Debugging errors
                 alert('An error occurred. Please try again.');
             }
         });
