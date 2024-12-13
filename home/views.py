@@ -6,7 +6,7 @@ from django.views.decorators.cache import cache_control
 
 
 def home(request):
-    banner = Banner.objects.get(position='homepage')
+    banner = Banner.objects.filter(position='homepage')
     categories = Category.objects.all()
     products_list = products.objects.prefetch_related('product_images').order_by('-created_date')[:4]
 
@@ -14,12 +14,12 @@ def home(request):
 
 
 def contact(request):
-    banner = Banner.objects.get(position = 'homepage')
+    banner = Banner.objects.filter(position = 'homepage')
     return render(request, 'home/contact.html',{'banner':banner })
 
 
 
 def about(request):
-    banner = Banner.objects.get(position = 'homepage')
-    about_banner = Banner.objects.get(position = 'shoppage')
+    banner = Banner.objects.filter(position = 'homepage')
+    about_banner = Banner.objects.filter(position = 'shoppage')
     return render(request, 'home/about.html',{'banner':banner, 'about_banner': about_banner })

@@ -137,7 +137,7 @@ def add_product_variant(request):
         product_variant_form = ProductVariantForm(request.POST)
         if product_variant_form.is_valid():
             product_variant_form.save()
-            return redirect('product_management')  # Redirect to the variant management page
+            return redirect('product_management')  
     else:
         product_variant_form = ProductVariantForm()
     return render(request, 'dashboard/add_product_variant.html', {'product_variant_form': product_variant_form})   
