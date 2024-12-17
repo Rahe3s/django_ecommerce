@@ -19,73 +19,80 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
       rel="stylesheet"
     />
-   
 
-    
     <link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet" />
     <link href="{% static 'css/style.css' %}" rel="stylesheet" />
     <link href="{% static 'css/user_profile.css' %}" rel="stylesheet" />
-   
+
     <title>
       Furni Free Bootstrap 5 Template for Furniture and Interior Design Websites
       by Untree.co
     </title>
   </head>
-  
 
-{%include 'navbar.html'%} 
-{%load static%}
-<div class="container-fluid">
+  {%include 'navbar.html'%} {%load static%}
+    <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2  text-white sidebar">
-            <nav class="navbar navbar-dark">
-                <h3 class="text-light"><i class="fa fa-user-edit mx-2"></i>Your Account</h3>
-                <div class="navbar-nav w-100">
-                    <a href="{% url 'your_profile' %}" class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_profile' %}active{% endif %}">
-                        <i class="fa fa-tachometer-alt me-2"></i>Your Details
-                    </a>
-                    <a href="{% url 'your_orders' %}" class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_orders' %}active{% endif %}">
-                        <i class="fa fa-th me-2"></i>Your Orders
-                    </a>
-                    <a href="{% url 'your_addresses' %}" class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_addresses' %}active{% endif %}">
-                        <i class="fa fa-keyboard me-2"></i>Your Addresses
-                    </a>
-                    <a href="{% url 'your_wallet' %}" class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_wallet' %}active{% endif %}">
-                        <i class="fa fa-table me-2"></i>Your Wallet
-                    </a>
-                    
-                </div>
-            </nav>
-        </div>
-        <div class="col-md-9 col-lg-10 content">
-            <div class="content_block">   
-        {% block profile_content %}
-        <!-- Main Content -->
-        
-        <div class="p-3">
+      <!-- Sidebar -->
+      <div class="col-md-3 col-lg-2 text-white sidebar">
+        <nav class="navbar navbar-dark">
+          <h3 class="text-light">
+            <i class="fa fa-user-edit mx-2"></i>Your Account
+          </h3>
+          <div class="navbar-nav w-100">
+            <a
+              href="{% url 'your_profile' %}"
+              class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_profile' %}active{% endif %}"
+            >
+              <i class="fa fa-tachometer-alt me-2"></i>Your Details
+            </a>
+            <a
+              href="{% url 'your_orders' %}"
+              class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_orders' %}active{% endif %}"
+            >
+              <i class="fa fa-th me-2"></i>Your Orders
+            </a>
+            <a
+              href="{% url 'your_addresses' %}"
+              class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_addresses' %}active{% endif %}"
+            >
+              <i class="fa fa-keyboard me-2"></i>Your Addresses
+            </a>
+            <a
+              href="{% url 'your_wallet' %}"
+              class="nav-item nav-link text-white my-2 {% if request.resolver_match.url_name == 'your_wallet' %}active{% endif %}"
+            >
+              <i class="fa fa-table me-2"></i>Your Wallet
+            </a>
+          </div>
+        </nav>
+      </div>
+      <div class="col-md-9 col-lg-10 content">
+        <div class="content_block">
+          {% block profile_content %}
+          <!-- Main Content -->
+
+          <div class="p-3">
             <h1>Welcome, {{ user.first_name }}!</h1>
             <br />
             <p><strong>First Name: </strong>{{ user.first_name }}</p>
             <p><strong>Last Name: </strong>{{ user.last_name }}</p>
             <p><strong>Phone: </strong>{{ user.phone }}</p>
             <p><strong>Email: </strong>{{ user.email }}</p>
-            <a href="{% url 'edit_profile' %}" class="btn btn-primary mt-3">Edit Profile</a>
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary mt-3"
+              >Edit Profile</a
+            >
+          </div>
+
+          {%endblock%}
         </div>
-        
-        {%endblock%}
-            </div>
-        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-
-{%include 'footer.html'%}
-
-
+  {%include 'footer.html'%}
 
   <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/tiny-slider.js' %}"></script>
   <script src="{% static 'js/custom.js' %}"></script>
-  
 </html>
